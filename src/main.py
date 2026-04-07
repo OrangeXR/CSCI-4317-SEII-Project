@@ -1,7 +1,4 @@
-import requests
-import os
 import sqlite3
-import json
 from werkzeug.security import check_password_hash
 from dotenv import load_dotenv
 
@@ -98,9 +95,9 @@ def get_assignments(user_id):
             f"{status_text}"
         )
 
-# =====================
-# get items not done
-# =====================
+# =========================
+# get Assignments not done
+# =========================
 def get_assignments_not_done(user_id):
     db = get_db()
     items = db.execute(
@@ -138,8 +135,102 @@ def get_assignments_not_done(user_id):
         )
 
 
+# =========================
+# add Assignments
+# =========================
+
+def add_assignment(user_id):
+    print("\n=== Add New Assignment ===")
+
+    name = input("Assignment name: ").strip()
+    class_name = input("Class name (ex: Software Engineering): ").strip()
+    category = input("Category (ex: Essay, Homework, Lab): ").strip()
+    due_date = input("Due date (YYYY-MM-DD): ").strip()
+
+    # Basic validation
+    if not name or not class_name or not category or not due_date:
+        print("\nAll fields are required. Assignment not added.")
+        return
+
+    db = get_db()
+    db.execute(
+        """
+        INSERT INTO assignments (user_id, name, class_name, category, due_date, status)
+        VALUES (?, ?, ?, ?, ?, 0)
+        """,
+        (user_id, name, class_name, category, due_date)
+    )
+    db.commit()
+    db.close()
+
+    print("\nAssignment added successfully!")
+
+
+
+# =========================
+# Mark assignment Done
+# =========================
+
+def mark_assignment_done(user_id):
+    db = get_db()
+
+    # Fetch assignments for this user
+    items = db.execute(
+        "SELECT id, name, status FROM assignments WHERE user_id = ?",
+        (user_id,)
+    ).fetchall()
+
+    if not items:
+        print("\nNo assignments found.")
+        db.close()
+        return
+
+    print("\n=========== Mark Assignment as Done ===========")
+    print(f"{'ID'.ljust(5)} {'Name'.ljust(40)} {'Status'}")
+    print("-" * 60)
+
+    for item in items:
+        status_text = "Done" if item["status"] == 1 else "Not Done"
+        print(f"{str(item['id']).ljust(5)} {item['name'].ljust(40)} {status_text}")
+
+    try:
+        assignment_id = int(input("\nEnter the ID of the assignment to mark as Done: "))
+    except ValueError:
+        print("Invalid input. Must be a number.")
+        db.close()
+        return
+
+    # Update the assignment
+    db.execute(
+        "UPDATE assignments SET status = 1 WHERE id = ? AND user_id = ?",
+        (assignment_id, user_id)
+    )
+    db.commit()
+    db.close()
+
+    print("\nAssignment marked as Done!")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # =====================================================================================================
-# =====================================================================================  Select Options
+# =====================================================================================  MAIN MENU
 # =====================================================================================================
 def main():
     # ===========
@@ -155,10 +246,10 @@ def main():
         print("\nOptions:")
         print("1. View Assignments")
         print("2. View Assignments Not Done")
-#        print("3. Add Item to Assignments") # (a bit annoying in terminal)
-#        print("3. Generate Binny Menu")
-        print("4. Logout")
-        print("5. Exit")
+        print("3. Add Assignments") # (a bit annoying in terminal)
+        print("4. Mark Assignment as Done")
+        print("5. Logout")
+        print("6. Exit")
         choice = input("\nChoose an option: ")
 # =====================================================================================  1. Get User Assignments
         if choice == "1":
@@ -167,14 +258,17 @@ def main():
         elif choice == "2":
             get_assignments_not_done(user_id)
 # =====================================================================================  3. Add an item to user Assignments (not sure if we'll use it in terminal)           
-#        elif choice == "3":
-#            add_item(user_id)
-# =====================================================================================  4. Logout
+        elif choice == "3":
+            add_assignment(user_id)
+# =====================================================================================  4. Mark an assignment as Done
         elif choice == "4":
+            mark_assignment_done(user_id)
+# =====================================================================================  5. Logout
+        elif choice == "5":
                 print("\nLogging out...\n")
                 return  "logout"# <-- sends user back to user select
-# =====================================================================================  5. Exit
-        elif choice == "5":
+# =====================================================================================  6. Exit
+        elif choice == "6":
             print("Goodbye!")
             return "exit"
 
