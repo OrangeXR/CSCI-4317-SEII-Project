@@ -1,3 +1,6 @@
+Document Links: [about](#about) / [install](#install) / [usage](#usage) / [demo](#demo)
+
+
 # CSCI-4317-SEII-Project
 
 <img width="1760" height="1211" alt="image" src="https://github.com/user-attachments/assets/696a4c0d-1b97-4491-950a-6885c7f18821" />
@@ -5,7 +8,7 @@
 
 
 
-
+<a name="about"></a>
 ## Definition of the problem:
 - Students are likely to miss assignments as they have to search through classroom pages & documents to find their assignments. All while relying on clunky built-in calendars (eg, Blackboard)
 - Instead of doing that, we’re creating a single place where you can track due dates and other important milestone dates, make notes of priorities for assignments, and get notifications for approaching due dates.
@@ -68,7 +71,9 @@
 
 <img width="3149" height="1373" alt="image" src="https://github.com/user-attachments/assets/09cfb075-674e-41e4-bf96-0df4120b04ef" />
 
-
+<a name="install"></a>
+<a name="usage"></a>
+<a name="demo"></a>
 
 
 <center>
