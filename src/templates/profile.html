@@ -1,0 +1,21 @@
+{% extends "0-base.html" %}
+{% block content %}
+
+<h1>Your Profile</h1>
+{% include '0-menu.html' %} 
+<div class="profile-container">
+
+    <img src="{{ url_for('static', filename='/profile_pics/' ~ user['profile_picture']) }}"
+         class="profile-pic">
+
+    <h2>{{ user['username'] }}</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+        <label>Upload New Profile Picture:</label><br>
+        <input type="file" name="profile_pic" accept="image/*"><br><br>
+        <button type="submit">Save</button>
+    </form>
+
+</div>
+
+{% endblock %}

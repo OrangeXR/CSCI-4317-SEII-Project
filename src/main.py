@@ -11,6 +11,8 @@ def get_db():
     return conn
 
 
+
+
 # ==================
 # choose user
 # ==================
@@ -43,7 +45,6 @@ def choose_user():
             print("Incorrect password. Try again.\n")
 
 
-
 # ======================================                         
 # Validate Login(get hash from database)                         
 # ======================================                           
@@ -55,6 +56,8 @@ def get_user_password_hash(user_id):
     ).fetchone()
     db.close()
     return row["password_hash"] if row else None
+
+
 
 
 
@@ -91,8 +94,6 @@ def get_assignments(user_id):
             f"{item['due_date'].ljust(15)}"
             f"{status_text}"
         )
-
-
 
 # =========================
 # get Assignments not done
@@ -134,7 +135,6 @@ def get_assignments_not_done(user_id):
         )
 
 
-
 # =========================
 # add Assignments
 # =========================
@@ -164,7 +164,6 @@ def add_assignment(user_id):
     db.close()
 
     print("\nAssignment added successfully!")
-
 
 
 
@@ -214,6 +213,22 @@ def mark_assignment_done(user_id):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # =====================================================================================================
 # =====================================================================================  MAIN MENU
 # =====================================================================================================
@@ -259,10 +274,6 @@ def main():
 
         else:
             print("Invalid choice.")
-
-
-
-
 
 
 

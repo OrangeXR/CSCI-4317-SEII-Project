@@ -1,18 +1,17 @@
-{% extends "base.html" %}
+{% extends "0-base.html" %}
 {% block content %}
 <h1>Assignments</h1>
-
-<a href="{{ url_for('add') }}">Add Assignment</a>
+{% include '0-menu.html' %}  
 
 <ul>
-    {% for a in assignments %}
-        <li>
-            <strong>{{ a[2] }}</strong> {{ a[1] }} - {{ a[3] }} — due {{ a[4] }}
+  
+{% for a, tag in assignments %}
+    <li class="{{ tag }}">
+        <strong>{{ a[3] }}</strong> {{ a[2] }} - {{ a[4] }} — due {{ a[5] }}
 
-
-            <a href="{{ url_for('edit', assignment_id=a[0]) }}">Edit</a>
-            <a href="{{ url_for('delete', assignment_id=a[0]) }}">Delete</a><br>
-        </li>
-    {% endfor %}
+        <a href="{{ url_for('edit', assignment_id=a[0]) }}">Edit</a>
+        <a href="{{ url_for('delete', assignment_id=a[0]) }}">Delete</a>
+    </li>
+{% endfor %}
 </ul>
 {% endblock %}
