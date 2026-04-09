@@ -155,7 +155,11 @@ p[style*="color:red"] {
     background: linear-gradient(90deg, #2a0f0f, #3a0f0f, #2a0f0f);
     animation: heatmap 3s infinite ease-in-out;
 }
-
+.due-today {
+    border-left: 6px solid #e01818;
+    background: #ff0000;
+    animation: heatmap 3s infinite ease-in-out;
+}
 .due-3 {
     border-left: 6px solid #e01818;
     background: #c9ae13;
