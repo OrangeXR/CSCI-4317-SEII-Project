@@ -150,22 +150,30 @@ p[style*="color:red"] {
 
 
 /* ====== due-status Highlights ====== */
-.due-soon {
-    border-left: 6px solid #e01818;
-    background: #177c17;
-}
-
-.due-today {
-    border-left: 6px solid #e01818;
-    background: #c9ae13;
-}
-
 .overdue {
     border-left: 6px solid #e63946;
     background: linear-gradient(90deg, #2a0f0f, #3a0f0f, #2a0f0f);
     animation: heatmap 3s infinite ease-in-out;
 }
 
+.due-3 {
+    border-left: 6px solid #e01818;
+    background: #c9ae13;
+}
+.due-5 {
+    border-left: 6px solid #e01818;
+    background: #177c17;
+}
+.due-7 {
+    border-left: 6px solid #e01818;
+    background: #177c17;
+}
+.due-xxxx {
+    border-left: 6px solid #e01818;
+    background: #177c17;
+}
+
+/* ====== Done Styling ====== */
 .done {
     border-left: 6px solid #033cf8;
     background: #000000;
