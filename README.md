@@ -41,7 +41,7 @@ Document Links: [about](#about) / [install](#install) / [usage](#usage) / [demo]
 
 - User can edit assignment info and update due dates if needed
 
--Users can adjust timing for due date notifications (number of days out to notify, how many times to notify, when to notify, etc.)
+- Users can adjust timing for due date notifications (number of days out to notify, how many times to notify, when to notify, etc.)
 
 
 
