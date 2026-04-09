@@ -9,9 +9,9 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 app = Flask(__name__)
 app.secret_key = "super-secret-key"   # required for session
 
-# ===============
-# Login
-# ===============
+# ============================================================================================================================
+# Login - handles user login using username and password; successful login redirects to index, if login fails returns to login
+# ============================================================================================================================
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -21,7 +21,7 @@ def login():
 
         user = get_user_by_username(username)
 
-        if user and check_password_hash(user["password_hash"], password):
+        if user and check_password_hash(user["password_hash"], password): # <---------------- checks password with hashed password stored in astra.db
             session["user_id"] = user["id"]
             session["username"] = user["username"]
             return redirect(url_for("index"))
@@ -32,9 +32,9 @@ def login():
 
 
 
-# ===============
-# Logout
-# ===============
+# ===================================================
+# Logout - clears session and redirects user to login
+# ===================================================
 
 @app.route("/logout")
 def logout():
@@ -43,9 +43,9 @@ def logout():
 
 
 
-# ==========================
-# PROFILE PAGE + UPLOAD
-# ==========================
+# =====================================================================================
+# PROFILE PAGE + UPLOAD - profile page for user that allows user to upload profile_pic
+# =====================================================================================
 @app.route("/profile", methods=["GET", "POST"])
 def profile():
     if "user_id" not in session:
@@ -59,14 +59,14 @@ def profile():
 
         if file and file.filename != "":
             # Ensure folder exists
-            upload_folder = os.path.join(BASE_DIR, "static", "profile_pics")
+            upload_folder = os.path.join(BASE_DIR, "static", "profile_pics")  # <------------------  Path to profile_pic upload folder
             os.makedirs(upload_folder, exist_ok=True)
 
             filename = f"user_{user_id}.png"
-            filepath = os.path.join(upload_folder, filename)
+            filepath = os.path.join(upload_folder, filename) # <------------------ adds full path together
 
             file.save(filepath)
-            update_profile_picture(user_id, filename)
+            update_profile_picture(user_id, filename)  # <-----------------------  passes info to database.py to be saved to user in astra.db
 
         return redirect(url_for("profile"))
 
@@ -75,9 +75,9 @@ def profile():
 
 
 
-# ===============
-# Site Index
-# ===============
+# =======================================================================================
+# Site Index - main page - grabs all assignments for user and determines  status of each
+# =======================================================================================
 
 @app.route("/")
 def index():
@@ -91,8 +91,7 @@ def index():
         print(dict(a))
 
 
-    today = datetime.today().date()
-    soon_threshold = today + timedelta(days=3)
+    today = datetime.today().date() # <--------------------------- gets todays date for comparison 
 
     processed = []
     for a in assignments:
@@ -113,14 +112,19 @@ def index():
                 processed.append((a, tag))
                 continue
 
-            due = datetime.strptime(raw_due, "%Y-%m-%d").date()
+            due = datetime.strptime(raw_due, "%Y-%m-%d").date() # <------------------- Logic for when assignments are due - check style.css for styling
+            days_left = (due - today).days
 
-            if due < today:
+            if days_left < 0:
                 tag = "overdue"
-            elif due == today:
+            elif days_left == 0:
                 tag = "due-today"
-            elif due <= soon_threshold:
-                tag = "due-soon"
+            elif days_left <= 3:
+                tag = "due-3"
+            elif days_left <= 5:
+                tag = "due-5"
+            elif days_left <= 7:
+                tag = "due-7"
             else:
                 tag = ""
 
@@ -130,9 +134,9 @@ def index():
     return render_template("index.html", assignments=processed)
 
 
-# ===============
-# Add Assignment
-# ===============
+# ===============================================================================================================
+# Add Assignment - displays for to insert a new assignment (for user) in the database and redirects to the index
+# ===============================================================================================================
 
 @app.route("/add", methods=["GET", "POST"])
 def add():
@@ -158,9 +162,9 @@ def add():
     return render_template("add_assignment.html")
 
 
-# ===============
-# Edit Assignment
-# ===============
+# ==========================================================================================
+# Edit Assignment - allows user to edit the selected assignment and post it to the database
+# ==========================================================================================
 
 @app.route("/edit/<int:assignment_id>", methods=["GET", "POST"])
 def edit(assignment_id):
@@ -179,9 +183,9 @@ def edit(assignment_id):
     return render_template("edit_assignment.html", assignment=assignment)
 
 
-# ===============
-# Delete Assignment
-# ===============
+# =======================================================================
+# Delete Assignment - deletes selected assignment and redirects to index
+# =======================================================================
 
 @app.route("/delete/<int:assignment_id>")
 def delete(assignment_id):
