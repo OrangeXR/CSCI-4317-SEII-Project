@@ -7,9 +7,9 @@ def get_db():
 
 
 
-# ===============================
-# 
-# ===============================
+# =============================================================
+# Get User by Username - Returns info for login authentication
+# =============================================================
 
 def get_user_by_username(username):
     conn = get_db()
@@ -22,9 +22,9 @@ def get_user_by_username(username):
 
 
 
-# ===============================
-# 
-# ===============================
+# ======================================
+# Get All Assignments (for specified user)
+# ======================================
 
 def get_all_assignments(user_id):
     conn = get_db()
@@ -39,9 +39,9 @@ def get_all_assignments(user_id):
 
 
 
-# ===============================
-# 
-# ===============================
+# ==================================================================================================
+# Add Assignment - adds a new assignment into the database (for specified user) the status will be 0
+# ==================================================================================================
 
 def add_assignment(user_id, name, class_name, category, due_date):
     conn = get_db()
@@ -55,9 +55,9 @@ def add_assignment(user_id, name, class_name, category, due_date):
 
 
 
-# ===============================
-# 
-# ===============================
+# ====================================
+# Get Assignments (for specified user)
+# ====================================
 
 def get_assignment(assignment_id):
     conn = get_db()
@@ -69,9 +69,9 @@ def get_assignment(assignment_id):
 
 
 
-# ===============================
-# Update Assignment
-# ===============================
+# ============================================================
+# Update Assignment - updates an existing assignment's fields)
+# ============================================================
 
 def update_assignment(assignment_id, name, class_name, category, due_date):
     conn = get_db()
@@ -86,9 +86,9 @@ def update_assignment(assignment_id, name, class_name, category, due_date):
 
 
 
-# ===============================
-# 
-# ===============================
+# ==================================
+# Delete Assignment (with passed id)
+# ==================================
 
 def delete_assignment(assignment_id):
     conn = getdb()
@@ -97,9 +97,9 @@ def delete_assignment(assignment_id):
     conn.commit()
     conn.close()
 
-# ===============================
-# 
-# ===============================
+# ============================================
+# Get user by id - Gets user info for profile
+# ============================================
 
 def get_user_by_id(user_id):
     conn = get_db()
@@ -111,9 +111,9 @@ def get_user_by_id(user_id):
 
 
 
-# ===============================
-# Upload profile_pic
-# ===============================
+# ==========================================================
+# Upload profile_pic - allows user to upload profile picture
+# ==========================================================
 
 def update_profile_picture(user_id, filename):
     conn = get_db()
