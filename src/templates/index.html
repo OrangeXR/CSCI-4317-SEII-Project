@@ -4,10 +4,11 @@
 {% include '0-menu.html' %}  
 
 <ul>
-  
+
+    
 {% for a, tag in assignments %}
     <li class="{{ tag }}">
-        <strong>{{ a[3] }}</strong> {{ a[2] }} - {{ a[4] }} — due {{ a[5] }}
+        <strong><at class="assignment-text1">{{ a[3] }}</at></strong> <at class="assignment-text2">{{ a[2] }} - {{ a[4] }} — due {{ a[5] }}</at>
 
         <a href="{{ url_for('edit', assignment_id=a[0]) }}">Edit</a>
         <a href="{{ url_for('delete', assignment_id=a[0]) }}">Delete</a>
