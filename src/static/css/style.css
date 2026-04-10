@@ -162,27 +162,28 @@ p[style*="color:red"] {
 }
 .due-3 {
     border-left: 6px solid #e01818;
-    background: #c9ae13;
+    background: #ff5e00;
 }
 .due-5 {
     border-left: 6px solid #e01818;
-    background: #177c17;
+    background: #ffaa00;
 }
 .due-7 {
     border-left: 6px solid #e01818;
-    background: #177c17;
+    background: #ffee00;
 }
 .due-xxxx {
     border-left: 6px solid #e01818;
-    background: #177c17;
+    background: #88ff00;
 }
 
 /* ====== Done Styling ====== */
 .done {
-    border-left: 6px solid #033cf8;
-    background: #000000;
+    border-left: 6px solid #023dff;
+    background: #5a5a5a;
     opacity: 0.9;
 }
+
 
 
 /* ====== Glow ====== */
