@@ -79,9 +79,4 @@ Document Links: [about](#about) / [install](#install) / [usage](#usage) / [demo]
 <center>
 The Phasers:
 <br>
-<a href="https://github.com/OrangeXR" title="Luis M"><img width="50" height="50" alt="profile image" src="https://avatars.githubusercontent.com/u/77978673?s=64&v=4" /></a>
-<a href="https://github.com/soldudo" title="Nico G"><img width="50" height="50" alt="A graphic-heavy logo" src="https://avatars.githubusercontent.com/u/88810277?s=64&v=4" />
-<a href="https://github.com/nere-var" title="Emma W"><img width="50" height="50" alt="profile image" src="https://avatars.githubusercontent.com/u/58350011?v=4" /></a>
-  </center>
-<a href="https://github.com/A-perez2265" title="Augustine P"><img width="50" height="50" alt="A graphic-heavy logo" src="https://avatars.githubusercontent.com/u/192671553?v=4" />
-<a href="https://github.com/bfier98" title="Ben F"><img width="50" height="50" alt="profile image" src="https://avatars.githubusercontent.com/u/220130367?v=4" /></a>
+<a href="https://github.com/OrangeXR" title="Luis M"><img width="50" height="50" alt="profile image" src="https://avatars.githubusercontent.com/u/77978673?s=64&v=4" /></a><a href="https://github.com/soldudo" title="Nico G"><img width="50" height="50" alt="A graphic-heavy logo" src="https://avatars.githubusercontent.com/u/88810277?s=64&v=4" /><a href="https://github.com/nere-var" title="Emma W"><img width="50" height="50" alt="profile image" src="https://avatars.githubusercontent.com/u/58350011?v=4" /></a><a href="https://github.com/A-perez2265" title="Augustine P"><img width="50" height="50" alt="A graphic-heavy logo" src="https://avatars.githubusercontent.com/u/192671553?v=4" /><a href="https://github.com/bfier98" title="Ben F"><img width="50" height="50" alt="profile image" src="https://avatars.githubusercontent.com/u/220130367?v=4" /></a></center>
