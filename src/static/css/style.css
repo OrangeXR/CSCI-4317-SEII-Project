@@ -274,3 +274,17 @@ p[style*="color:red"] {
 }
 
 /* ===========*/
+
+/* ========= Assignment Text ========= */
+.assignment-text1{
+    color: #0f04aaf6;
+    -webkit-text-stroke: 0.1px rgb(15, 199, 31);
+    font-weight: 500;
+}
+.assignment-text2{
+    color: #12e61d;
+    background-color: #0f0f0f;
+    -webkit-text-stroke: 0.2px black;
+    text-decoration: none;
+    font-weight: 500;
+}
