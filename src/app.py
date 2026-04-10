@@ -102,11 +102,9 @@ def index():
         else:
             raw_due = a["due_date"]
 
-            # SAFETY: if due_date is invalid, swap with category
             if not raw_due or "-" not in raw_due:
                 raw_due = a["category"]
 
-            # SAFETY: if STILL invalid, skip date parsing entirely
             if not raw_due or "-" not in raw_due:
                 tag = ""
                 processed.append((a, tag))
@@ -125,6 +123,8 @@ def index():
                 tag = "due-5"
             elif days_left <= 7:
                 tag = "due-7"
+            elif days_left <= 14:
+                tag = "due-14"                
             else:
                 tag = ""
 
@@ -178,7 +178,7 @@ def edit(assignment_id):
         due_date = request.form["due_date"]
         update_assignment(assignment_id, name, class_name, category, due_date)
         return redirect(url_for("index"))
-    # You’ll add a DB helper to fetch a single assignment
+ 
     assignment = get_assignment(assignment_id)
     return render_template("edit_assignment.html", assignment=assignment)
 
