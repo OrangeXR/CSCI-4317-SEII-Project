@@ -124,9 +124,11 @@ def index():
             elif days_left <= 7:
                 tag = "due-7"
             elif days_left <= 14:
-                tag = "due-14"                
+                tag = "due-14"  
+            elif days_left <= 30:
+                tag = "due-30"                                
             else:
-                tag = ""
+                tag = "due-xxxx"
 
         processed.append((a, tag))
 
