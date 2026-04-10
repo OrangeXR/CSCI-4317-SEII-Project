@@ -172,10 +172,19 @@ p[style*="color:red"] {
     border-left: 6px solid #e01818;
     background: #ffee00;
 }
+.due-14 {
+    border-left: 6px solid #e01818;
+    background: #00ff00;
+}
+.due-30 {
+    border-left: 6px solid #e01818;
+    background: #00ffaa;
+}
 .due-xxxx {
     border-left: 6px solid #e01818;
-    background: #88ff00;
+    background: #00f7ff;
 }
+
 
 /* ====== Done Styling ====== */
 .done {
