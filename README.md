@@ -72,9 +72,21 @@ Document Links: [about](#about) / [install](#install) / [usage](#usage) / [demo]
 <img width="3149" height="1373" alt="image" src="https://github.com/user-attachments/assets/09cfb075-674e-41e4-bf96-0df4120b04ef" />
 
 <a name="install"></a>
-<a name="usage"></a>
-<a name="demo"></a>
+# Installation:
+- ``` apt install python3.13-venv ``` # install the virtual environment module for Python 3.13
+- ``` apt install git ```             # install Git
+- ```python3 -m venv venv```          # create virtual environment
+- ```source venv/bin/activate```      # activate it
+- ```git clone https://github.com/OrangeXR/CSCI-4317-SEII-Project/```
+- ```cd CSCI-4317-SEII-Project```
+- ```pip install -r requirements.txt```   # installs all packages listed
 
+
+
+<a name="usage"></a>
+# Usage:
+<a name="demo"></a>
+# Demo:
 
 <center>
 The Phasers:
