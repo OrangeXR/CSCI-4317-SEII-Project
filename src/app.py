@@ -34,7 +34,7 @@ def register():
             """, (name, username, password_hash, "default.png"))
             conn.commit()
         except Exception as e:
-            return render_template("register.html", error="Username already exists")
+            return render_template("register.html", error=str(e))
 
         return redirect(url_for("login"))
 
