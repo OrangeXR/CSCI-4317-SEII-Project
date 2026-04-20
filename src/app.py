@@ -9,6 +9,39 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 app = Flask(__name__)
 app.secret_key = "super-secret-key"   # required for session
 
+
+
+# ============================================================================================================================
+# Create new user
+# ============================================================================================================================
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        name = request.form["name"]
+        username = request.form["username"]
+        password = request.form["password"]
+
+        password_hash = generate_password_hash(password) # hash user password to insert into astra.db
+
+        conn = get_db()
+        cur = conn.cursor()
+
+        try:
+            cur.execute("""
+                INSERT INTO users (name, username, password_hash, profile_picture)
+                VALUES (?, ?, ?, ?)
+            """, (name, username, password_hash, "default.png"))
+            conn.commit()
+        except Exception as e:
+            return render_template("register.html", error="Username already exists")
+
+        return redirect(url_for("login"))
+
+    return render_template("register.html")
+
+
+
 # ============================================================================================================================
 # Login - handles user login using username and password; successful login redirects to index, if login fails returns to login
 # ============================================================================================================================
