@@ -91,7 +91,7 @@ def update_assignment(assignment_id, name, class_name, category, due_date):
 # ==================================
 
 def delete_assignment(assignment_id):
-    conn = getdb()
+    conn = get_db()
     cur = conn.cursor()
     cur.execute("DELETE FROM assignments WHERE id=?", (assignment_id,))
     conn.commit()
