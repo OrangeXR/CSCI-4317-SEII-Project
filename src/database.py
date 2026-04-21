@@ -91,7 +91,7 @@ def update_assignment(assignment_id, name, class_name, category, due_date):
 # ==================================
 
 def delete_assignment(assignment_id):
-    conn = get_db()
+    conn = getdb()
     cur = conn.cursor()
     cur.execute("DELETE FROM assignments WHERE id=?", (assignment_id,))
     conn.commit()
@@ -111,9 +111,9 @@ def get_user_by_id(user_id):
 
 
 
-# ==========================================================
-# Upload profile_pic - allows user to upload profile picture
-# ==========================================================
+# =============================================================================
+# Upload profile_pic - allows user to upload profile picture from user profile
+# =============================================================================
 
 def update_profile_picture(user_id, filename):
     conn = get_db()

@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-from werkzeug.security import check_password_hash
-from database import get_all_assignments, add_assignment, update_assignment, delete_assignment, get_assignment, get_user_by_username, get_user_by_id, update_profile_picture 
+from werkzeug.security import check_password_hash, generate_password_hash
+from database import get_all_assignments, add_assignment, update_assignment, delete_assignment, get_assignment, get_user_by_username, get_user_by_id, update_profile_picture, get_db 
 from datetime import datetime, timedelta
 import os
 
@@ -8,6 +8,8 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 app = Flask(__name__)
 app.secret_key = "super-secret-key"   # required for session
+
+
 
 
 
@@ -35,6 +37,9 @@ def register():
             conn.commit()
         except Exception as e:
             return render_template("register.html", error=str(e))
+    
+        #except Exception as e:
+        #    return render_template("register.html", error="Username already exists")
 
         return redirect(url_for("login"))
 
@@ -117,16 +122,26 @@ def index():
     if "user_id" not in session:
         return redirect(url_for("login"))
 
+    # NEW: read sort option from query string
+    sort = request.args.get("sort", "due")  # default = due date
+
     assignments = get_all_assignments(session["user_id"])
+    assignments = [dict(a) for a in assignments]  # convert Row → dict
 
+    # ============================
+    # SORTING LOGIC
+    # ============================
+    if sort == "class_name":
+        assignments.sort(key=lambda a: a["class_name"].lower())
+    elif sort == "due":
+        assignments.sort(key=lambda a: a["due_date"])
+    elif sort == "type":
+        assignments.sort(key=lambda a: a["category"])    
+    # (you can add more later)
 
-    for a in assignments:
-        print(dict(a))
-
-
-    today = datetime.today().date() # <--------------------------- gets todays date for comparison 
-
+    today = datetime.today().date()
     processed = []
+
     for a in assignments:
         status = a["status"]
 
@@ -143,7 +158,7 @@ def index():
                 processed.append((a, tag))
                 continue
 
-            due = datetime.strptime(raw_due, "%Y-%m-%d").date() # <------------------- Logic for when assignments are due - check style.css for styling
+            due = datetime.strptime(raw_due, "%Y-%m-%d").date()
             days_left = (due - today).days
 
             if days_left < 0:
@@ -157,16 +172,15 @@ def index():
             elif days_left <= 7:
                 tag = "due-7"
             elif days_left <= 14:
-                tag = "due-14"  
+                tag = "due-14"
             elif days_left <= 30:
-                tag = "due-30"                                
+                tag = "due-30"
             else:
                 tag = "due-xxxx"
 
         processed.append((a, tag))
 
-
-    return render_template("index.html", assignments=processed)
+    return render_template("index.html", assignments=processed, sort=sort)
 
 
 # ===============================================================================================================
@@ -213,7 +227,7 @@ def edit(assignment_id):
         due_date = request.form["due_date"]
         update_assignment(assignment_id, name, class_name, category, due_date)
         return redirect(url_for("index"))
- 
+    # You’ll add a DB helper to fetch a single assignment
     assignment = get_assignment(assignment_id)
     return render_template("edit_assignment.html", assignment=assignment)
 
