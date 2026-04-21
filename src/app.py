@@ -108,7 +108,19 @@ def profile():
 
         return redirect(url_for("profile"))
 
-    return render_template("profile.html", user=user)
+    done_assignments = get_db().execute(
+        "SELECT * FROM assignments WHERE user_id = ? AND status = 1 ORDER BY due_date DESC",
+        (session["user_id"],)
+    ).fetchall()
+
+
+    return render_template(
+        "profile.html",
+        user=user,
+        user_name=session["username"],
+        done_assignments=done_assignments
+    )
+
 
 
 
@@ -119,6 +131,7 @@ def profile():
 
 @app.route("/")
 def index():
+
     if "user_id" not in session:
         return redirect(url_for("login"))
 
@@ -128,59 +141,95 @@ def index():
     assignments = get_all_assignments(session["user_id"])
     assignments = [dict(a) for a in assignments]  # convert Row → dict
 
-    # ============================
-    # SORTING LOGIC
-    # ============================
-    if sort == "class_name":
-        assignments.sort(key=lambda a: a["class_name"].lower())
-    elif sort == "due":
-        assignments.sort(key=lambda a: a["due_date"])
-    elif sort == "type":
-        assignments.sort(key=lambda a: a["category"])    
-    # (you can add more later)
-
     today = datetime.today().date()
-    processed = []
 
+    active_assignments = []
+    done_assignments = []
+
+    # ============================
+    # PROCESS ASSIGNMENTS
+    # ============================
     for a in assignments:
         status = a["status"]
 
+        # -------------------------
+        # DONE ASSIGNMENTS
+        # -------------------------
         if status == 1:
-            tag = "done"
+            done_assignments.append((a, "done"))
+            continue
+
+        # -------------------------
+        # ACTIVE ASSIGNMENTS
+        # -------------------------
+        raw_due = a["due_date"]
+
+        if not raw_due or "-" not in raw_due:
+            raw_due = a["category"]
+
+        if not raw_due or "-" not in raw_due:
+            tag = ""
+            active_assignments.append((a, tag))
+            continue
+
+        due = datetime.strptime(raw_due, "%Y-%m-%d").date()
+        days_left = (due - today).days
+
+        if days_left < 0:
+            tag = "overdue"
+        elif days_left == 0:
+            tag = "due-today"
+        elif days_left <= 3:
+            tag = "due-3"
+        elif days_left <= 5:
+            tag = "due-5"
+        elif days_left <= 7:
+            tag = "due-7"
+        elif days_left <= 14:
+            tag = "due-14"
+        elif days_left <= 30:
+            tag = "due-30"
         else:
-            raw_due = a["due_date"]
+            tag = "due-xxxx"
 
-            if not raw_due or "-" not in raw_due:
-                raw_due = a["category"]
+        active_assignments.append((a, tag))
 
-            if not raw_due or "-" not in raw_due:
-                tag = ""
-                processed.append((a, tag))
-                continue
+    # ============================
+    # SORT ACTIVE ASSIGNMENTS
+    # ============================
+    if sort == "class_name":
+        active_assignments.sort(key=lambda x: x[0]["class_name"].lower())
+    elif sort == "due":
+        active_assignments.sort(key=lambda x: x[0]["due_date"])
+    elif sort == "type":
+        active_assignments.sort(key=lambda x: x[0]["category"])
 
-            due = datetime.strptime(raw_due, "%Y-%m-%d").date()
-            days_left = (due - today).days
+    # ============================
+    # OVERVIEW COUNTERS
+    # ============================
+    week_later = today + timedelta(days=7)
+    two_weeks_later = today + timedelta(days=14)
 
-            if days_left < 0:
-                tag = "overdue"
-            elif days_left == 0:
-                tag = "due-today"
-            elif days_left <= 3:
-                tag = "due-3"
-            elif days_left <= 5:
-                tag = "due-5"
-            elif days_left <= 7:
-                tag = "due-7"
-            elif days_left <= 14:
-                tag = "due-14"
-            elif days_left <= 30:
-                tag = "due-30"
-            else:
-                tag = "due-xxxx"
+    due_this_week = sum(
+        1 for a, tag in active_assignments
+        if today <= datetime.strptime(a["due_date"], "%Y-%m-%d").date() <= week_later
+    )
 
-        processed.append((a, tag))
+    due_next_week = sum(
+        1 for a, tag in active_assignments
+        if week_later < datetime.strptime(a["due_date"], "%Y-%m-%d").date() <= two_weeks_later
+    )
 
-    return render_template("index.html", assignments=processed, sort=sort)
+    return render_template(
+        "index.html",
+        assignments=active_assignments,
+        done_assignments=done_assignments,
+        sort=sort,
+        user_name=session["username"],
+        due_this_week=due_this_week,
+        due_next_week=due_next_week
+    )
+
 
 
 # ===============================================================================================================
@@ -208,7 +257,7 @@ def add():
 
         return redirect(url_for("index"))
 
-    return render_template("add_assignment.html")
+    return render_template("add_assignment.html", user_name=session["username"])
 
 
 # ==========================================================================================
@@ -229,7 +278,7 @@ def edit(assignment_id):
         return redirect(url_for("index"))
     # You’ll add a DB helper to fetch a single assignment
     assignment = get_assignment(assignment_id)
-    return render_template("edit_assignment.html", assignment=assignment)
+    return render_template("edit_assignment.html", assignment=assignment, user_name=session["username"])
 
 
 # =======================================================================
@@ -243,6 +292,31 @@ def delete(assignment_id):
 
     delete_assignment(assignment_id)
     return redirect(url_for("index"))
+
+
+
+
+
+# =======================================================================
+# Finish Assignment - Mark assignment as Done
+# =======================================================================
+
+@app.route("/done/<int:assignment_id>")
+def mark_done(assignment_id):
+    db = get_db()
+    db.execute("UPDATE assignments SET status = 1 WHERE id = ?", (assignment_id,))
+    db.commit()
+    return redirect(url_for("index"))
+
+
+
+
+
+
+
+
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
