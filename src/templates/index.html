@@ -1,34 +1,91 @@
 {% extends "0-base.html" %}
 {% block content %}
-<h1>Assignments</h1>
-{% include '0-menu.html' %}  
 
-
-<form method="get" action="/">
-    <label for="sort">Sort by:</label>
-    <select name="sort" id="sort" onchange="this.form.submit()">
-        <option value="due" {% if sort == 'due' %}selected{% endif %}>Due Date</option>
-        <option value="class_name" {% if sort == 'class' %}selected{% endif %}>Class Name</option>
-        <option value="type" {% if sort == 'type' %}selected{% endif %}>Category</option>
-    </select>
-</form>
+<div class="layout">
 
 
 
-<ul>
+    <!-- MAIN CONTENT -->
+    <main class="content">
 
-    
-{% for a, tag in assignments %}
-    <li class="{{ tag }}">
-        <strong><span class="assignment-text1">{{ a['name'] }}</span></strong>
-<span class="assignment-text2">
-    {{ a['class_name'] }} - {{ a['category'] }} — due {{ a['due_date'] }}
-</span>
+        <!-- OVERVIEW SECTION -->
+        <section class="overview">
+            <div class="card">
+                <h3>Due This Week</h3>
+                <p>{{ due_this_week }}</p>
+            </div>
 
-<a href="{{ url_for('edit', assignment_id=a['id']) }}">Edit</a>
-<a href="{{ url_for('delete', assignment_id=a['id']) }}">Delete</a>
+            <div class="card">
+                <h3>Due Next Week</h3>
+                <p>{{ due_next_week }}</p>
+            </div>
+        </section>
 
-    </li>
-{% endfor %}
-</ul>
+        <!-- SORTING CONTROLS -->
+        <section class="sort-controls">
+            <form method="get" action="/">
+                <label>Sort by:</label>
+                    <select name="sort" onchange="this.form.submit()">
+                        <option value="due" {% if sort == 'due' %}selected{% endif %}>Due Date</option>
+                        <option value="class_name" {% if sort == 'class_name' %}selected{% endif %}>Class Name</option>
+                        <option value="type" {% if sort == 'type' %}selected{% endif %}>Category</option>
+                    </select>
+            </form>
+        </section>
+
+        <!-- ACTIVE ASSIGNMENTS -->
+        <section class="assignment-grid">
+            {% for a, tag in assignments %}
+            <div class="assignment-card {{ tag }}">
+
+                <strong>
+                    <span class="assignment-text1">
+                        {{ a['class_name'] }}
+                    </span>
+                </strong>
+
+                    <span class="assignment-text2">
+                        {{ a['name'] }} - {{ a['category'] }} — due {{ a['due_date'] }}
+                    </span>
+
+                <div class="assignment-links">
+                    <a href="{{ url_for('edit', assignment_id=a['id']) }}">Edit</a>
+                    <a href="{{ url_for('delete', assignment_id=a['id']) }}">Delete</a>
+
+                    {% if tag != 'done' %}
+                    <a href="{{ url_for('mark_done', assignment_id=a['id']) }}">Mark Done</a>
+                    {% endif %}
+                </div>
+
+            </div>
+            {% endfor %}
+        </section>
+
+
+        <h2>Recently Completed</h2>
+
+        <section class="assignment-grid">
+            {% for a, tag in done_assignments %}
+            <div class="assignment-card done">
+
+                <strong>
+                    <span class="assignment-text1">{{ a['class_name'] }}</span>
+                </strong>
+
+                <span class="assignment-text2">
+                    {{ a['name'] }} - {{ a['category'] }} — completed {{ a['due_date'] }}
+                </span>
+
+                <div class="assignment-links">
+                    <a href="{{ url_for('edit', assignment_id=a['id']) }}">Edit</a>
+                </div>
+
+            </div>
+            {% endfor %}
+        </section>
+
+
+    </main>
+</div>
+
 {% endblock %}

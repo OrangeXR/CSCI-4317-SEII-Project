@@ -301,3 +301,246 @@ p[style*="color:red"] {
 }
 
 
+/* ====== DASHBOARD LAYOUT ====== */
+.layout {
+    display: flex;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+/* ====== SIDEBAR ====== */
+.sidebar {
+    width: 240px;
+    background: #141414;
+    padding: 25px;
+    border-right: 1px solid #2a2a2a;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+}
+
+.sidebar h2 {
+    margin-bottom: 25px;
+    font-size: 20px;
+}
+
+.sidebar nav a {
+    display: block;
+    padding: 10px 0;
+    color: #d0d0d0;
+    font-size: 15px;
+}
+
+.sidebar nav a:hover {
+    color: #4cc9f0;
+}
+
+/* ====== MAIN CONTENT ====== */
+.content {
+    margin-left: 260px; /* space for sidebar */
+    padding: 30px;
+    width: calc(100% - 260px);
+}
+
+/* ====== OVERVIEW CARDS ====== */
+.overview {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.overview .card {
+    flex: 1;
+    background: #1a1a1a;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid #2a2a2a;
+}
+
+/* ====== SORTING CONTROLS ====== */
+.sort-controls {
+    margin-bottom: 20px;
+}
+
+.sort-controls select {
+    padding: 8px 12px;
+    background: #222;
+    color: #fff;
+    border-radius: 6px;
+    border: 1px solid #444;
+}
+
+/* ====== ASSIGNMENT GRID ====== */
+.assignment-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+}
+
+.assignment-card {
+    background: #1a1a1a;
+    padding: 18px;
+    border-radius: 10px;
+    border-left: 6px solid transparent;
+    border: 1px solid #2a2a2a;
+}
+
+.assignment-card.overdue,
+.assignment-card.due-today,
+.assignment-card.due-3,
+.assignment-card.due-5,
+.assignment-card.due-7,
+.assignment-card.due-14,
+.assignment-card.due-30,
+.assignment-card.due-xxxx,
+.assignment-card.done {
+    border-left-width: 6px !important;
+    border-left-style: solid !important;
+    background: inherit; /* allow your gradient backgrounds */
+}
+
+
+
+.assignment-card.overdue {
+    background: linear-gradient(90deg, #2a0f0f, #3a0f0f, #2a0f0f) !important;
+}
+
+.assignment-card.due-today {
+    background: #ff0000 !important;
+}
+
+.assignment-card.due-3 {
+    background: #ff5e00 !important;
+}
+
+.assignment-card.due-5 {
+    background: #ffaa00 !important;
+}
+
+.assignment-card.due-7 {
+    background: #ffee00 !important;
+}
+
+.assignment-card.due-14 {
+    background: #00ff00 !important;
+}
+
+.assignment-card.due-30 {
+    background: #00ffaa !important;
+}
+
+.assignment-card.due-xxxx {
+    background: #00f7ff !important;
+}
+
+.assignment-card.done {
+    background: #5a5a5a !important;
+    opacity: 0.9;
+}
+
+
+
+
+
+/* ====== DASHBOARD LAYOUT ====== */
+.layout {
+    display: flex;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+/* ====== SIDEBAR ====== */
+.sidebar {
+    width: 120px;
+    background: #141414;
+    padding: 25px;
+    border-right: 1px solid #2a2a2a;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+}
+
+.sidebar h2 {
+    margin-bottom: 25px;
+    font-size: 20px;
+}
+
+.sidebar nav a {
+    display: block;
+    padding: 10px 0;
+    color: #d0d0d0;
+    font-size: 15px;
+}
+
+.sidebar nav a:hover {
+    color: #4cc9f0;
+}
+
+/* ====== MAIN CONTENT ====== */
+.content {
+    margin-left: 110px;
+    padding: 30px;
+    width: calc(100% - 110px);
+}
+
+/* ====== OVERVIEW CARDS ====== */
+.overview {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.overview .card {
+    flex: 1;
+    background: #1a1a1a;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid #2a2a2a;
+}
+
+/* ====== SORTING CONTROLS ====== */
+.sort-controls {
+    margin-bottom: 20px;
+}
+
+.sort-controls select {
+    padding: 8px 12px;
+    background: #222;
+    color: #fff;
+    border-radius: 6px;
+    border: 1px solid #444;
+}
+
+/* ====== ASSIGNMENT GRID ====== */
+.assignment-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+}
+
+.assignment-card {
+    background: #1a1a1a;
+    padding: 18px;
+    border-radius: 10px;
+    border-left: 6px solid transparent;
+    border: 1px solid #2a2a2a;
+}
+
+/* ====== ASSIGNMENT LINKS ====== */
+.assignment-card .assignment-links a {
+    display: inline-block;
+    margin-right: 12px;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #4cc9f0;
+}
+
+.assignment-card .assignment-links a:hover {
+    color: #72ddf7;
+}

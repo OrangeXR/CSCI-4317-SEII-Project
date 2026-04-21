@@ -2,7 +2,6 @@
 {% block content %}
 
 <h1>Your Profile</h1>
-{% include '0-menu.html' %} 
 <div class="profile-container">
 
     <img src="{{ url_for('static', filename='/profile_pics/' ~ user['profile_picture']) }}"
@@ -17,5 +16,30 @@
     </form>
 
 </div>
+
+<hr>
+
+<h2>Completed Assignments</h2>
+
+<section class="assignment-grid">
+    {% for a in done_assignments %}
+    <div class="assignment-card done">
+
+        <strong>
+            <span class="assignment-text1">{{ a['class_name'] }}</span>
+        </strong>
+
+        <span class="assignment-text2">
+            {{ a['name'] }} - {{ a['category'] }} — completed {{ a['due_date'] }}
+        </span>
+
+        <div class="assignment-links">
+            <a href="{{ url_for('edit', assignment_id=a['id']) }}">Edit</a>
+            <a href="{{ url_for('delete', assignment_id=a['id']) }}">Delete</a>
+        </div>
+
+    </div>
+    {% endfor %}
+</section>
 
 {% endblock %}

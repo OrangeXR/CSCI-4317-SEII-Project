@@ -1,14 +1,10 @@
-<div class="link_menu">
-    <a href="{{ url_for('index') }}" class="text">
-        <button type="submit" class="link_button" width="25px">Home</button>
-    </a>
-    <a href="{{ url_for('profile') }}" class="text">
-        <button type="submit" class="link_button" width="25px">Profile</button>
-    </a>
-    <a href="{{ url_for('add') }}" class="text">
-        <button type="submit" class="link_button width="25px"">Add Assignment</button>
-    </a>
-    <a href="{{ url_for('logout') }}" class="text">
-        <button type="submit" class="link_button width="25px"">Logout</button>
-    </a>
-</div>
+<aside class="sidebar">
+    <h2>{{ user_name }}</h2>
+
+    <nav>
+        <a href="{{ url_for('index') }}">Dashboard</a>
+        <a href="{{ url_for('add') }}">Add Assignment</a>
+        <a href="{{ url_for('profile') }}">Profile</a>
+        <a href="{{ url_for('logout') }}">Log Out</a>
+    </nav>
+</aside>

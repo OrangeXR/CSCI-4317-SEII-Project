@@ -1,0 +1,36 @@
+{% extends "0-base.html" %}
+{% block content %}
+<h1>Assignments</h1>
+{% include '0-menu.html' %}  
+
+
+<form method="get" action="/">
+    <label for="sort">Sort by:</label>
+    <select name="sort" id="sort" onchange="this.form.submit()">
+        <option value="due" {% if sort == 'due' %}selected{% endif %}>Due Date</option>
+        <option value="class_name" {% if sort == 'class' %}selected{% endif %}>Class Name</option>
+        <option value="type" {% if sort == 'type' %}selected{% endif %}>Category</option>
+    </select>
+</form>
+
+
+
+<ul> 
+    {% for a, tag in assignments %}
+        <li class="{{ tag }}">
+            <strong>
+                <span class="assignment-text1">
+                    {{ a['name'] }}
+                </span>
+            </strong>
+                <span class="assignment-text2">
+                    {{ a['class_name'] }} - {{ a['category'] }} — due {{ a['due_date'] }}
+                </span>
+                    <a href="{{ url_for('edit', assignment_id=a['id']) }}">Edit</a>
+                    <a href="{{ url_for('delete', assignment_id=a['id']) }}">Delete</a>
+        </li>
+    {% endfor %}
+</ul>
+
+
+{% endblock %}

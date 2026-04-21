@@ -3,17 +3,18 @@
 <h1>Edit Assignment</h1>
 
 <form method="POST">
-<label>Assignment Name:</label><br>
-<input type="text" name="name" value="{{ assignment['name'] }}"><br><br>
+    
+    <label>Assignment Name:</label><br>
+    <input type="text" name="name" value="{{ assignment['name'] }}"><br><br>
 
-<label>Class Name:</label><br>
-<input type="text" name="class_name" value="{{ assignment['class_name'] }}"><br><br>
+    <label>Class Name:</label><br>
+    <input type="text" name="class_name" value="{{ assignment['class_name'] }}"><br><br>
 
-<label>Category:</label><br>
-<input type="text" name="category" value="{{ assignment['category'] }}"><br><br>
+    <label>Category:</label><br>
+    <input type="text" name="category" value="{{ assignment['category'] }}"><br><br>
 
-<label>Due Date:</label><br>
-<input type="date" name="due_date" value="{{ assignment['due_date'] }}"><br><br>
+    <label>Due Date:</label><br>
+    <input type="date" name="due_date" value="{{ assignment['due_date'] }}"><br><br>
 
     <button type="submit">Save Changes</button>
 </form>
