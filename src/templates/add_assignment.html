@@ -2,7 +2,7 @@
 {% block content %}
 <h1>Add Assignment</h1>
 
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
 
     <label>Class Name:</label><br>
     <input type="text" name="class_name" required><br><br>
@@ -15,6 +15,13 @@
 
     <label>Due Date:</label><br>
     <input type="date" name="due_date" required><br><br>
+
+    <label>Notes:</label>
+    <textarea name="notes" rows="4" class="form-control">{{ assignment.notes if assignment else "" }}</textarea>
+
+    <label>Upload File:</label>
+    <input type="file" name="file_uploads" class="form-control" multiple>
+
 
     <button type="submit">Add Assignment</button>
 </form>
