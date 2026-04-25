@@ -5,10 +5,18 @@
 
 
 
-    <!-- MAIN CONTENT -->
+    <!-- 
+    # ============
+    # MAIN CONTENT
+    # ============
+    -->
     <main class="content">
 
-        <!-- OVERVIEW SECTION -->
+        <!-- 
+        # ================
+        # OVERVIEW SECTION 
+        # ================
+        -->
         <section class="overview">
             <div class="card">
                 <h3>Due This Week</h3>
@@ -21,7 +29,11 @@
             </div>
         </section>
 
-        <!-- SORTING CONTROLS -->
+        <!-- 
+        # ================ 
+        # SORTING CONTROLS 
+        # ================  
+        -->
         <section class="sort-controls">
             <form method="get" action="/">
                 <label>Sort by:</label>
@@ -33,33 +45,76 @@
             </form>
         </section>
 
-        <!-- ACTIVE ASSIGNMENTS -->
+        <!-- 
+        # ================== 
+        # ACTIVE ASSIGNMENTS 
+        # ================== 
+        -->
         <section class="assignment-grid">
-            {% for a, tag in assignments %}
-            <div class="assignment-card {{ tag }}">
+    {% for a, tag in assignments %}
+    <div class="assignment-card {{ tag }}">
 
-                <strong>
-                    <span class="assignment-text1">
-                        {{ a['class_name'] }}
-                    </span>
-                </strong>
+        <strong>
+            <span class="assignment-text1">
+                {{ a['class_name'] }}
+            </span>
+        </strong>
 
-                    <span class="assignment-text2">
-                        {{ a['name'] }} - {{ a['category'] }} — due {{ a['due_date'] }}
-                    </span>
+        <span class="assignment-text2">
+            {{ a['name'] }} - {{ a['category'] }} — due {{ a['due_date'] }}
+        </span>
 
-                <div class="assignment-links">
-                    <a href="{{ url_for('edit', assignment_id=a['id']) }}">Edit</a>
-                    <a href="{{ url_for('delete', assignment_id=a['id']) }}">Delete</a>
+        <!-- 
+        # ==============
+        # DETAILS BUTTON 
+        # ============== 
+        -->
+        <button class="details-btn" onclick="toggleDetails('{{ a['id'] }}')">
+            Show Details
+        </button>
+        <!-- ========================================= Details box ============================================== -->
+        <div id="details-{{ a['id'] }}" class="details-box" style="display:none;">
+            <p><strong>Notes:</strong></p>
+            <p>{{ a['notes'] if a['notes'] else "No notes added." }}</p>
 
-                    {% if tag != 'done' %}
-                    <a href="{{ url_for('mark_done', assignment_id=a['id']) }}">Mark Done</a>
-                    {% endif %}
-                </div>
+            {% if a['file_path'] %}
+                <p><strong>Attached File:</strong></p>
+                <!-- 
+                # ===================== 
+                # multiple file uploads 
+                # ===================== 
+                -->
+                {% for path in a['file_path'].split(',') %}
+                    <a href="{{ url_for('static', filename=path) }}" target="_blank">
+                        [Download {{ path.split('/')[-1] }}]
+                    </a>
+                    <a class="delete_file-btn" href="{{ url_for('remove_file', assignment_id=a['id'], file_path=path, next=request.path) }}">
+                        Remove File
+                    </a>
+                    <br>
+                {% endfor %}
+            {% else %}
+                <p><em>No file uploaded.</em></p>
+            {% endif %}
+        </div>
+        <!-- =================================================================================================== -->
+        <!-- 
+        # ======================================= 
+        # EDIT / DELETE / MARK DONE BUTTONS 
+        # ======================================= 
+        -->
+        <div class="assignment-links">
+            <a class="edit-btn" href="{{ url_for('edit', assignment_id=a['id']) }}">Edit</a>
+            <a class="delete-btn" href="{{ url_for('delete', assignment_id=a['id']) }}">Delete</a>
 
-            </div>
-            {% endfor %}
-        </section>
+            {% if tag != 'done' %}
+            <a class="done-btn" href="{{ url_for('mark_done', assignment_id=a['id']) }}">Mark Done</a>
+            {% endif %}
+        </div>
+        <!-- ======================================= -->
+    </div>
+    {% endfor %}
+</section>
 
 
         <h2>Recently Completed</h2>
@@ -87,5 +142,23 @@
 
     </main>
 </div>
+
+<!--
+# =============================
+# Assignment details
+# =============================
+-->
+<script>
+function toggleDetails(id) {
+    const box = document.getElementById("details-" + id);
+    box.style.display = (box.style.display === "none") ? "block" : "none";
+}
+</script>
+
+
+
+
+
+
 
 {% endblock %}
