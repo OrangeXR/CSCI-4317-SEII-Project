@@ -212,6 +212,13 @@ p[style*="color:red"] {
 
 
 /* ===== Menu (no buttons) ===== */
+.menu-profile-pic {
+    width: 80px;      /* adjust size */
+    height: 80px;     /* keeps it square */
+    object-fit: cover;
+    border-radius: 50%;   /* keeps it circular */
+}
+
 .link_menu {
     margin-bottom: 20px;
     padding: 10px 0;
@@ -543,4 +550,84 @@ p[style*="color:red"] {
 
 .assignment-card .assignment-links a:hover {
     color: #72ddf7;
+}
+
+/* ====== ASSIGNMENT buttons ====== */
+.edit-btn {
+    margin-top: 8px;
+    padding: 6px 10px;
+    background: #4a6cf7;
+    color: rgb(29, 21, 21) !important;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.edit-btn:hover {
+    background: #3a57d0;
+}
+
+.delete-btn {
+    margin-top: 8px;
+    padding: 6px 10px;
+    background: #f74a4a;
+    color: rgb(29, 21, 21) !important;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.delete-btn:hover {
+    background: #d03a3a;
+}
+
+.delete_file-btn {
+    margin-left: 0px;
+    padding: 1px 1px;
+    background: #d03a3a;
+    color: black !important;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+
+
+.done-btn {
+    margin-top: 8px;
+    padding: 6px 10px;
+    background: #04ce30;
+    color: rgb(29, 21, 21) !important;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.done-btn:hover {
+    background: #0d6d04;
+}
+
+
+
+/* ====== ASSIGNMENT NOTES ====== */
+.details-btn {
+    margin-top: 8px;
+    padding: 6px 10px;
+    background: #4a6cf7;
+    color: rgb(29, 21, 21);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.details-btn:hover {
+    background: #3a57d0;
+}
+
+.details-box {
+    margin-top: 10px;
+    padding: 10px;
+    background: #1b1717;
+    border-left: 3px solid #312d2d;
+    border-radius: 4px;
 }
