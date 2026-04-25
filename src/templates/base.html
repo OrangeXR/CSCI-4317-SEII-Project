@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- Same as 0-base.html with the exception of the menu( used mostly for Login page)-->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,10 +8,28 @@
         a { margin-right: 10px; }
         .container { max-width: 800px; margin: auto; }
     </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+
 </head>
+
+
+
 <body>
-    <div class="container">
+
+<div class="layout">
+
+    
+
+    <main class="content">
         {% block content %}{% endblock %}
-    </div>
+    </main>
+
+</div>
+
 </body>
+
+
+
+
 </html>
