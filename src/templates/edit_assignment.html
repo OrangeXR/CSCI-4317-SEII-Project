@@ -2,7 +2,7 @@
 {% block content %}
 <h1>Edit Assignment</h1>
 
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
     
     <label>Assignment Name:</label><br>
     <input type="text" name="name" value="{{ assignment['name'] }}"><br><br>
@@ -15,6 +15,14 @@
 
     <label>Due Date:</label><br>
     <input type="date" name="due_date" value="{{ assignment['due_date'] }}"><br><br>
+
+    <label>Notes:</label>
+    <textarea name="notes" rows="4" class="form-control">{{ assignment.notes if assignment else "" }}</textarea>
+
+    <label>Upload File:</label>
+    <input type="file" name="file_uploads" class="form-control" multiple>
+
+
 
     <button type="submit">Save Changes</button>
 </form>
