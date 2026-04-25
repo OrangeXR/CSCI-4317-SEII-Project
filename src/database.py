@@ -46,12 +46,15 @@ def get_all_assignments(user_id):
 def add_assignment(user_id, name, class_name, category, due_date):
     conn = get_db()
     cur = conn.cursor()
-    cur.execute(
-        "INSERT INTO assignments (user_id, name, class_name, category, due_date, status) VALUES (?, ?, ?, ?, ?, 0)",
+    cur.execute("""
+        INSERT INTO assignments (user_id, name, class_name, category, due_date, status, notes, file_path)
+        VALUES (?, ?, ?, ?, ?, 0)
+                """,
         (user_id, name, class_name, category, due_date)
     )
     conn.commit()
     conn.close()
+    return cur.lastrowid
 
 
 
@@ -73,7 +76,7 @@ def get_assignment(assignment_id):
 # Update Assignment - updates an existing assignment's fields)
 # ============================================================
 
-def update_assignment(assignment_id, name, class_name, category, due_date):
+def update_assignment(assignment_id, name, class_name, category, due_date): # updated with notes and files
     conn = get_db()
     cur = conn.cursor()
     cur.execute("""
@@ -84,7 +87,14 @@ def update_assignment(assignment_id, name, class_name, category, due_date):
     conn.commit()
     conn.close()
 
-
+def update_assignment(assignment_id, name, class_name, category, due_date, notes, file_path):# updated with notes and files
+    db = get_db()
+    db.execute("""
+        UPDATE assignments
+        SET name = ?, class_name = ?, category = ?, due_date = ?, notes = ?,file_path = ?
+        WHERE id = ?
+    """, (name, class_name, category, due_date, notes, file_path, assignment_id))
+    db.commit()
 
 # ==================================
 # Delete Assignment (with passed id)
