@@ -76,16 +76,6 @@ def get_assignment(assignment_id):
 # Update Assignment - updates an existing assignment's fields)
 # ============================================================
 
-def update_assignment(assignment_id, name, class_name, category, due_date): # updated with notes and files
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute("""
-        UPDATE assignments
-        SET name = ?, class_name = ?, category = ?, due_date = ?
-        WHERE id = ?
-    """, (name, class_name, category, due_date, assignment_id))
-    conn.commit()
-    conn.close()
 
 def update_assignment(assignment_id, name, class_name, category, due_date, notes, file_path):# updated with notes and files
     db = get_db()
