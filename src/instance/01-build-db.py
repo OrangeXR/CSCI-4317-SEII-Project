@@ -32,10 +32,12 @@ CREATE TABLE IF NOT EXISTS assignments (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     name TEXT NOT NULL,
-    class_name INTEGER NOT NULL,
+    class_name TEXT NOT NULL,
     category TEXT NOT NULL,
     due_date TEXT NOT NULL,
     status BOOLEAN '0',
+    notes TEXT,
+    file_path TEXT,
     FOREIGN KEY (user_id) REFERENCES users(id)
 )
 """)
