@@ -56,12 +56,12 @@
 
         <strong>
             <span class="assignment-text1">
-                {{ a['class_name'] }}
+                {{ a['class_name'] }}<br>
             </span>
         </strong>
 
         <span class="assignment-text2">
-            {{ a['name'] }} - {{ a['category'] }} — due {{ a['due_date'] }}
+            {{ a['name'] }} - {{ a['category'] }} <br> due {{ a['due_date'] }}
         </span>
 
         <!-- 
@@ -69,10 +69,11 @@
         # DETAILS BUTTON 
         # ============== 
         -->
+        <br />
         <button class="details-btn" onclick="toggleDetails('{{ a['id'] }}')">
             Show Details
         </button>
-        <!-- ========================================= Details box ============================================== -->
+
         <div id="details-{{ a['id'] }}" class="details-box" style="display:none;">
             <p><strong>Notes:</strong></p>
             <p>{{ a['notes'] if a['notes'] else "No notes added." }}</p>
@@ -97,10 +98,10 @@
                 <p><em>No file uploaded.</em></p>
             {% endif %}
         </div>
-        <!-- =================================================================================================== -->
+
         <!-- 
         # ======================================= 
-        # EDIT / DELETE / MARK DONE BUTTONS 
+        # EDIT / DELETE / MARK DONE BUTTONS BELOW 
         # ======================================= 
         -->
         <div class="assignment-links">
@@ -111,7 +112,7 @@
             <a class="done-btn" href="{{ url_for('mark_done', assignment_id=a['id']) }}">Mark Done</a>
             {% endif %}
         </div>
-        <!-- ======================================= -->
+
     </div>
     {% endfor %}
 </section>
@@ -145,7 +146,7 @@
 
 <!--
 # =============================
-# Assignment details
+# show notes and download files
 # =============================
 -->
 <script>
