@@ -85,6 +85,25 @@ Document Links: [about](#about) / [install](#install) / [usage](#usage) / [demo]
 
 <a name="usage"></a>
 # Usage:
+Navigate to the application's root folder and run app.py
+- ``` python3 src/app.py```
+- <img width="327" height="32" alt="image" src="https://github.com/user-attachments/assets/5f7631e7-997d-4a52-a383-58dd4faab684" />
+- A Flask instance will be started.  Click on the ip to launch a browser window for the GUI
+- <img width="835" height="89" alt="image" src="https://github.com/user-attachments/assets/470fa7a0-e67e-45c2-b8d2-04260a7cf058" />
+- Login or create an account
+- <img width="144" height="193" alt="image" src="https://github.com/user-attachments/assets/5b918fe1-f2a8-4761-a25c-37e58c10d780" />
+- Once logged in you will be taken to the dashboard showing assignments due this, next week, and list of your assignments.  The list is sorted by due date by default.
+- <img width="893" height="382" alt="image" src="https://github.com/user-attachments/assets/abbac92a-b1fe-4758-be5b-08e6ebbf7c50" />
+- Assignment Notes can be viewed by clicking on the Show Details button
+- <img width="205" height="338" alt="image" src="https://github.com/user-attachments/assets/05c31adc-e2fe-40fb-a335-23f944486c29" />
+- The main menu is along the left of the window.  From here there is an option to add an assignment
+- <img width="77" height="149" alt="image" src="https://github.com/user-attachments/assets/ed58aea7-e4e6-4675-afed-d47f8530cd5e" />
+- Fields are provided for the assignment information as well as an option to include notes and files related to each assignment
+- <img width="431" height="387" alt="image" src="https://github.com/user-attachments/assets/97173d72-80a9-4c58-9013-0f6c6dad13d3" />
+- The profile page allows users to change their profile picture as well as seeing their completed assignments
+- <img width="756" height="386" alt="image" src="https://github.com/user-attachments/assets/6e24bab8-9a42-40b0-8e8d-2ccbd98412cd" />
+
+
 <a name="demo"></a>
 # Demo:
 
