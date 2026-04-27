@@ -1,5 +1,7 @@
-5. Testing & Validation (10 pts)<br>
-• 9–10: Clear test cases with thoughtful analysis<br>
-• 7–8: Basic testing present<br>
-• 5–6: Limited testing<br>
-• 0–4: Missing<br>
+# Phase 5: Testing (4/27)
+## What to Do:
+- Show that you tested your system
+## Include:
+- 3–5 test cases
+- Expected vs actual results
+- Any bugs or issues identified
