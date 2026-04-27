@@ -45,14 +45,14 @@ def get_all_assignments(user_id):
 # Add Assignment - adds a new assignment into the database (for specified user) the status will be 0
 # ==================================================================================================
 
-def add_assignment(user_id, name, class_name, category, due_date):
+def add_assignment(user_id, name, class_name, category, due_date, notes, file_path): # added notes and file_path to the parameters
     conn = get_db()
     cur = conn.cursor()
     cur.execute("""
         INSERT INTO assignments (user_id, name, class_name, category, due_date, status, notes, file_path)
-        VALUES (?, ?, ?, ?, ?, 0)
+        VALUES (?, ?, ?, ?, ?, 0, ?, ?)
                 """,
-        (user_id, name, class_name, category, due_date)
+        (user_id, name, class_name, category, due_date, notes, file_path)
     )
     conn.commit()
     conn.close()
