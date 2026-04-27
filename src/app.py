@@ -81,6 +81,8 @@ def logout():
 
 
 
+
+
 # =====================================================================================
 # PROFILE PAGE + UPLOAD - profile page for user that allows user to upload profile_pic
 # =====================================================================================
@@ -116,7 +118,7 @@ def profile():
 
     return render_template(
         "profile.html",
-        user=user,
+        #user=user,
         user_name=session["username"],
         done_assignments=done_assignments
     )
@@ -159,6 +161,10 @@ def index():
             done_assignments.append((a, "done"))
             continue
 
+        # Keep only the 4 most recent completed assignments
+        done_assignments.sort(key=lambda x: x[0]["due_date"], reverse=True)
+        done_assignments = done_assignments[:4]
+        
         # -------------------------
         # ACTIVE ASSIGNMENTS
         # -------------------------
@@ -205,19 +211,35 @@ def index():
         active_assignments.sort(key=lambda x: x[0]["category"])
 
     # ============================
-    # OVERVIEW COUNTERS
+    # OVERVIEW COUNTERS (Sunday-based weeks)
     # ============================
-    week_later = today + timedelta(days=7)
-    two_weeks_later = today + timedelta(days=14)
+
+    today = datetime.today().date()
+
+    # Find this upcoming Sunday
+    days_until_sunday = (6 - today.weekday()) % 7
+    this_sunday = today + timedelta(days=days_until_sunday)
+
+    # Next week boundaries
+    next_monday = this_sunday + timedelta(days=1)
+    next_sunday = next_monday + timedelta(days=6)
+
+    def parse_date(d):
+        try:
+            return datetime.strptime(d, "%Y-%m-%d").date()
+        except:
+            return None
 
     due_this_week = sum(
         1 for a, tag in active_assignments
-        if today <= datetime.strptime(a["due_date"], "%Y-%m-%d").date() <= week_later
+        if parse_date(a["due_date"]) is not None
+        and today <= parse_date(a["due_date"]) <= this_sunday
     )
 
     due_next_week = sum(
         1 for a, tag in active_assignments
-        if week_later < datetime.strptime(a["due_date"], "%Y-%m-%d").date() <= two_weeks_later
+        if parse_date(a["due_date"]) is not None
+        and next_monday <= parse_date(a["due_date"]) <= next_sunday
     )
 
     return render_template(
@@ -229,6 +251,18 @@ def index():
         due_this_week=due_this_week,
         due_next_week=due_next_week
     )
+
+
+
+# =====================
+# set user call globaly
+# =====================
+@app.context_processor
+def inject_user():
+    if "user_id" in session:
+        user = get_user_by_id(session["user_id"])
+        return {"user": user}
+    return {"user": None}
 
 
 
@@ -246,18 +280,50 @@ def add():
         class_name = request.form["class_name"]
         category = request.form["category"]
         due_date = request.form["due_date"]
+        notes = request.form.get("notes", "")
 
-        add_assignment(
+        
+        assignment_id = add_assignment(
             session["user_id"],
             name,
             class_name,
             category,
-            due_date
+            due_date,
+            notes,
+            None
         )
+
+        # ==================
+        # Handle file upload
+        # ==================
+        
+        files = request.files.getlist("file_uploads")
+        file_paths = []
+
+        if files:
+            user_id = session["user_id"]
+            upload_folder = os.path.join(BASE_DIR, "static", "assignment_files", str(user_id))
+            os.makedirs(upload_folder, exist_ok=True)
+
+            for file in files:
+                if file and file.filename != "":
+                    filename = f"{assignment_id}_{file.filename}"
+                    file_path = f"assignment_files/{user_id}/{filename}"
+
+                    file.save(os.path.join(upload_folder, filename))
+                    file_paths.append(file_path)
+
+        # Save comma-separated list
+        file_paths_str = ",".join(file_paths)
+
+        db = get_db()
+        db.execute("UPDATE assignments SET file_path = ? WHERE id = ?", (file_paths_str, assignment_id))
+        db.commit()
 
         return redirect(url_for("index"))
 
     return render_template("add_assignment.html", user_name=session["username"])
+
 
 
 # ==========================================================================================
@@ -269,15 +335,53 @@ def edit(assignment_id):
     if "user_id" not in session:
         return redirect(url_for("login"))
 
+    assignment = get_assignment(assignment_id)
+    
     if request.method == "POST":
         name = request.form["name"]
         class_name = request.form["class_name"]
         category = request.form["category"]
         due_date = request.form["due_date"]
-        update_assignment(assignment_id, name, class_name, category, due_date)
+        notes = request.form.get("notes", "")
+
+        # =============================
+        # file uploads
+        # =============================
+        files = request.files.getlist("file_uploads")
+
+        # Start with existing files
+        existing_paths = assignment["file_path"].split(",") if assignment["file_path"] else []
+        new_paths = []
+
+        if files:
+            user_id = session["user_id"]
+            upload_folder = os.path.join(BASE_DIR, "static", "assignment_files", str(user_id))
+            os.makedirs(upload_folder, exist_ok=True)
+
+            for file in files:
+                if file and file.filename != "":
+                    filename = f"{assignment_id}_{file.filename}"
+                    file_path = f"assignment_files/{user_id}/{filename}"
+
+                    file.save(os.path.join(upload_folder, filename))
+                    new_paths.append(file_path)
+
+        # Combine old + new
+        final_paths = existing_paths + new_paths
+        file_paths_str = ",".join(final_paths)
+
+        update_assignment(
+            assignment_id,
+            name,
+            class_name,
+            category,
+            due_date,
+            notes,
+            file_paths_str
+        )
+
         return redirect(url_for("index"))
-    # You’ll add a DB helper to fetch a single assignment
-    assignment = get_assignment(assignment_id)
+    
     return render_template("edit_assignment.html", assignment=assignment, user_name=session["username"])
 
 
@@ -291,11 +395,49 @@ def delete(assignment_id):
         return redirect(url_for("login"))
 
     delete_assignment(assignment_id)
+
+    next_page = request.args.get("next")
+    if next_page:
+        return redirect(next_page)
+
     return redirect(url_for("index"))
 
 
+# =========================================================
+# Delete Assignment File - deletes selected assignment file 
+# =========================================================
+@app.route("/remove_file/<int:assignment_id>")
+def remove_file(assignment_id):
+    if "user_id" not in session:
+        return redirect(url_for("login"))
 
+    file_path = request.args.get("file_path")
+    next_page = request.args.get("next", url_for("index"))
 
+    if not file_path:
+        return redirect(next_page)
+
+    # Get assignment
+    assignment = get_assignment(assignment_id)
+    if not assignment:
+        return redirect(next_page)
+
+    # Remove file from disk
+    full_path = os.path.join(BASE_DIR, "static", file_path)
+    if os.path.exists(full_path):
+        os.remove(full_path)
+
+    # Remove file from DB list
+    paths = assignment["file_path"].split(",") if assignment["file_path"] else []
+    updated_paths = [p for p in paths if p != file_path]
+    new_file_path_str = ",".join(updated_paths)
+
+    # Update DB
+    db = get_db()
+    db.execute("UPDATE assignments SET file_path = ? WHERE id = ?", (new_file_path_str, assignment_id))
+    db.commit()
+
+    return redirect(next_page)
 
 # =======================================================================
 # Finish Assignment - Mark assignment as Done
@@ -307,6 +449,10 @@ def mark_done(assignment_id):
     db.execute("UPDATE assignments SET status = 1 WHERE id = ?", (assignment_id,))
     db.commit()
     return redirect(url_for("index"))
+
+
+
+
 
 
 
