@@ -383,13 +383,13 @@ p[style*="color:red"] {
 /* ====== ASSIGNMENT GRID ====== */
 .assignment-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 18px;
+    grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+    gap: 16px;
 }
 
 .assignment-card {
     background: #1a1a1a;
-    padding: 18px;
+    padding: 10px;
     border-radius: 10px;
     border-left: 6px solid transparent;
     border: 1px solid #2a2a2a;
@@ -406,7 +406,7 @@ p[style*="color:red"] {
 .assignment-card.done {
     border-left-width: 6px !important;
     border-left-style: solid !important;
-    background: inherit; /* allow your gradient backgrounds */
+    background: inherit; 
 }
 
 
@@ -524,20 +524,6 @@ p[style*="color:red"] {
     border: 1px solid #444;
 }
 
-/* ====== ASSIGNMENT GRID ====== */
-.assignment-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 18px;
-}
-
-.assignment-card {
-    background: #1a1a1a;
-    padding: 18px;
-    border-radius: 10px;
-    border-left: 6px solid transparent;
-    border: 1px solid #2a2a2a;
-}
 
 /* ====== ASSIGNMENT LINKS ====== */
 .assignment-card .assignment-links a {
@@ -631,3 +617,5 @@ p[style*="color:red"] {
     border-left: 3px solid #312d2d;
     border-radius: 4px;
 }
+
+
