@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import check_password_hash, generate_password_hash
-from database import get_all_assignments, add_assignment, update_assignment, delete_assignment, get_assignment, get_user_by_username, get_user_by_id, update_profile_picture, get_db 
+from database import create_user, get_user_by_username, get_user_by_id, get_all_assignments, get_done_assignments, add_assignment, update_assignment, delete_assignment, get_assignment, update_profile_picture, update_assignment_files, remove_file_from_assignment, mark_assignment_done
 from datetime import datetime, timedelta
 import os
 
@@ -11,10 +11,21 @@ app.secret_key = "super-secret-key"   # required for session
 
 
 
+# =========================
+# Date Validation
+# =========================
+
+def is_valid_date(date_str):
+    try:
+        datetime.strptime(date_str, "%Y-%m-%d")
+        return True
+    except Exception:
+        return False
+
 
 
 # ============================================================================================================================
-# Create new user
+# Register new user
 # ============================================================================================================================
 
 @app.route("/register", methods=["GET", "POST"])
@@ -24,22 +35,12 @@ def register():
         username = request.form["username"]
         password = request.form["password"]
 
-        password_hash = generate_password_hash(password) # hash user password to insert into astra.db
-
-        conn = get_db()
-        cur = conn.cursor()
+        password_hash = generate_password_hash(password)
 
         try:
-            cur.execute("""
-                INSERT INTO users (name, username, password_hash, profile_picture)
-                VALUES (?, ?, ?, ?)
-            """, (name, username, password_hash, "default.png"))
-            conn.commit()
+            create_user(name, username, password_hash)
         except Exception as e:
             return render_template("register.html", error=str(e))
-    
-        #except Exception as e:
-        #    return render_template("register.html", error="Username already exists")
 
         return redirect(url_for("login"))
 
@@ -59,15 +60,14 @@ def login():
 
         user = get_user_by_username(username)
 
-        if user and check_password_hash(user["password_hash"], password): # <---------------- checks password with hashed password stored in astra.db
+        if user and check_password_hash(user["password_hash"], password):
             session["user_id"] = user["id"]
             session["username"] = user["username"]
             return redirect(url_for("index"))
-        else:
-            return render_template("login.html", error="Invalid username or password")
+
+        return render_template("login.html", error="Invalid username or password")
 
     return render_template("login.html")
-
 
 
 # ===================================================
@@ -92,7 +92,7 @@ def profile():
         return redirect(url_for("login"))
 
     user_id = session["user_id"]
-    user = get_user_by_id(user_id)
+
 
     if request.method == "POST":
         file = request.files.get("profile_pic")
@@ -110,11 +110,7 @@ def profile():
 
         return redirect(url_for("profile"))
 
-    done_assignments = get_db().execute(
-        "SELECT * FROM assignments WHERE user_id = ? AND status = 1 ORDER BY due_date DESC",
-        (session["user_id"],)
-    ).fetchall()
-
+    done_assignments = get_done_assignments(user_id)
 
     return render_template(
         "profile.html",
@@ -133,18 +129,15 @@ def profile():
 
 @app.route("/")
 def index():
-
     if "user_id" not in session:
         return redirect(url_for("login"))
 
-    # NEW: read sort option from query string
-    sort = request.args.get("sort", "due")  # default = due date
+    sort = request.args.get("sort", "due")
 
     assignments = get_all_assignments(session["user_id"])
-    assignments = [dict(a) for a in assignments]  # convert Row → dict
+    assignments = [dict(a) for a in assignments]
 
     today = datetime.today().date()
-
     active_assignments = []
     done_assignments = []
 
@@ -178,8 +171,15 @@ def index():
             active_assignments.append((a, tag))
             continue
 
-        due = datetime.strptime(raw_due, "%Y-%m-%d").date()
+        # Try to parse the due date safely
+        try:
+            due = datetime.strptime(raw_due, "%Y-%m-%d").date()
+        except ValueError:
+            active_assignments.append((a, ""))
+            continue
+
         days_left = (due - today).days
+
 
         if days_left < 0:
             tag = "overdue"
@@ -255,7 +255,7 @@ def index():
 
 
 # =====================
-# set user call globaly
+# CONTEXT PROCESSOR
 # =====================
 @app.context_processor
 def inject_user():
@@ -280,9 +280,21 @@ def add():
         class_name = request.form["class_name"]
         category = request.form["category"]
         due_date = request.form["due_date"]
+
+        if not is_valid_date(due_date):
+            return render_template(
+                "add_assignment.html",
+                user_name=session["username"],
+                error="Invalid date format. Please use YYYY-MM-DD.",
+                name=request.form["name"],
+                class_name=request.form["class_name"],
+                category=request.form["category"],
+                due_date=due_date,
+                notes=request.form.get("notes", "")
+            )
+
         notes = request.form.get("notes", "")
 
-        
         assignment_id = add_assignment(
             session["user_id"],
             name,
@@ -313,16 +325,21 @@ def add():
                     file.save(os.path.join(upload_folder, filename))
                     file_paths.append(file_path)
 
-        # Save comma-separated list
-        file_paths_str = ",".join(file_paths)
-
-        db = get_db()
-        db.execute("UPDATE assignments SET file_path = ? WHERE id = ?", (file_paths_str, assignment_id))
-        db.commit()
+        update_assignment_files(assignment_id, ",".join(file_paths))
 
         return redirect(url_for("index"))
 
-    return render_template("add_assignment.html", user_name=session["username"])
+    return render_template(
+        "add_assignment.html",
+        user_name=session["username"],
+        error="Invalid date format. Please use YYYY-MM-DD.",
+        name=request.form["name"],
+        class_name=request.form["class_name"],
+        category=request.form["category"],
+        due_date=due_date,
+        notes=request.form.get("notes", "")
+    )
+        
 
 
 
@@ -336,12 +353,28 @@ def edit(assignment_id):
         return redirect(url_for("login"))
 
     assignment = get_assignment(assignment_id)
-    
+
     if request.method == "POST":
         name = request.form["name"]
         class_name = request.form["class_name"]
         category = request.form["category"]
         due_date = request.form["due_date"]
+
+        if not is_valid_date(due_date):
+            # keep user input
+            assignment["name"] = request.form["name"]
+            assignment["class_name"] = request.form["class_name"]
+            assignment["category"] = request.form["category"]
+            assignment["due_date"] = due_date
+            assignment["notes"] = request.form.get("notes", "")
+
+            return render_template(
+                "edit_assignment.html",
+                assignment=assignment,
+                user_name=session["username"],
+                error="Invalid date format. Please use MM-DD-YYYY."
+            )
+
         notes = request.form.get("notes", "")
 
         # =============================
@@ -397,10 +430,7 @@ def delete(assignment_id):
     delete_assignment(assignment_id)
 
     next_page = request.args.get("next")
-    if next_page:
-        return redirect(next_page)
-
-    return redirect(url_for("index"))
+    return redirect(next_page or url_for("index"))
 
 
 # =========================================================
@@ -430,12 +460,8 @@ def remove_file(assignment_id):
     # Remove file from DB list
     paths = assignment["file_path"].split(",") if assignment["file_path"] else []
     updated_paths = [p for p in paths if p != file_path]
-    new_file_path_str = ",".join(updated_paths)
 
-    # Update DB
-    db = get_db()
-    db.execute("UPDATE assignments SET file_path = ? WHERE id = ?", (new_file_path_str, assignment_id))
-    db.commit()
+    remove_file_from_assignment(assignment_id, ",".join(updated_paths))
 
     return redirect(next_page)
 
@@ -444,10 +470,8 @@ def remove_file(assignment_id):
 # =======================================================================
 
 @app.route("/done/<int:assignment_id>")
-def mark_done(assignment_id):
-    db = get_db()
-    db.execute("UPDATE assignments SET status = 1 WHERE id = ?", (assignment_id,))
-    db.commit()
+def done(assignment_id):
+    mark_assignment_done(assignment_id)
     return redirect(url_for("index"))
 
 
@@ -462,8 +486,6 @@ def mark_done(assignment_id):
 
 
 
-
-
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
 
