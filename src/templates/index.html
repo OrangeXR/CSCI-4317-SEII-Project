@@ -109,7 +109,7 @@
             <a class="delete-btn" href="{{ url_for('delete', assignment_id=a['id']) }}">Delete</a>
 
             {% if tag != 'done' %}
-            <a class="done-btn" href="{{ url_for('mark_done', assignment_id=a['id']) }}">Mark Done</a>
+            <a class="done-btn" href="{{ url_for('done', assignment_id=a['id']) }}">Mark Done</a>
             {% endif %}
         </div>
 
