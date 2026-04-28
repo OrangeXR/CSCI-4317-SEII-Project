@@ -1,0 +1,34 @@
+{% extends "0-base.html" %}
+{% block content %}
+<h1>Edit Assignment</h1>
+{% if error %}
+<div class="error">{{ error }}</div>
+{% endif %}
+
+<form method="POST" enctype="multipart/form-data">
+    
+    <label>Assignment Name:</label><br>
+    <input type="text" name="name" value="{{ assignment['name'] }}"><br><br>
+
+    <label>Class Name:</label><br>
+    <input type="text" name="class_name" value="{{ assignment['class_name'] }}"><br><br>
+
+    <label>Category:</label><br>
+    <input type="text" name="category" value="{{ assignment['category'] }}"><br><br>
+
+    <label>Due Date:</label><br>
+    <input type="date" name="due_date" value="{{ assignment['due_date'] }}"><br><br>
+
+    <label>Notes:</label>
+    <textarea name="notes" rows="4" class="form-control">{{ assignment.notes if assignment else "" }}</textarea>
+
+    <label>Upload File:</label>
+    <input type="file" name="file_uploads" class="form-control" multiple>
+
+
+
+    <button type="submit">Save Changes</button>
+</form>
+
+<a href="{{ url_for('index') }}">Back</a>
+{% endblock %}

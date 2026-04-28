@@ -1,0 +1,33 @@
+{% extends "0-base.html" %}
+{% block content %}
+<h1>Add Assignment</h1>
+{% if error %}
+<div class="error">{{ error }}</div>
+{% endif %}
+
+<form method="POST" enctype="multipart/form-data">
+
+    <label>Assignment Name:</label><br>
+    <input type="text" name="name" value="{{ name or '' }}"><br><br>
+
+    <label>Class Name:</label><br>
+    <input type="text" name="class_name" value="{{ class_name or '' }}"><br><br>
+
+    <label>Category:</label><br>
+    <input type="text" name="category" value="{{ category or '' }}"><br><br>
+
+    <label>Due Date:</label><br>
+    <input type="date" name="due_date" value="{{ due_date or '' }}"><br><br>
+
+    <label>Notes:</label>
+    <textarea name="notes" rows="4" class="form-control">{{ notes if assignment else "" }}</textarea>
+
+    <label>Upload File:</label>
+    <input type="file" name="file_uploads" class="form-control" multiple>
+
+
+    <button type="submit">Add Assignment</button>
+</form>
+
+<a href="{{ url_for('index') }}">Back</a>
+{% endblock %}

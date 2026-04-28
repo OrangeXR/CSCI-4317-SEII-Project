@@ -1,0 +1,94 @@
+{% extends "0-base.html" %}
+{% block content %}
+
+<h1>Your Profile</h1>
+<div class="profile-container">
+
+    <img src="{{ url_for('static', filename='/profile_pics/' ~ user['profile_picture']) }}"
+         class="profile-pic">
+
+    <h2>{{ user['username'] }}</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+        <label>Upload New Profile Picture:</label><br>
+        <input type="file" name="profile_pic" accept="image/*"><br><br>
+        <button type="submit">Save</button>
+    </form>
+
+</div>
+
+<hr>
+
+<h2>Completed Assignments</h2>
+
+<section class="assignment-grid">
+    {% for a in done_assignments %}
+    <div class="assignment-card done">
+
+        <strong>
+            <span class="assignment-text1">{{ a['class_name'] }}</span>
+        </strong>
+
+        <span class="assignment-text2">
+            {{ a['name'] }} - {{ a['category'] }} — completed {{ a['due_date'] }}
+        </span>
+        
+        <br>
+        <button class="details-btn" onclick="toggleDetails('{{ a['id'] }}')">
+            Show Details
+        </button>
+
+        <div id="details-{{ a['id'] }}" class="details-box" style="display:none;">
+            <p><strong>Notes:</strong></p>
+            <p>{{ a['notes'] if a['notes'] else "No notes added." }}</p>
+
+            {% if a['file_path'] %}
+                <p><strong>Attached File:</strong></p>
+                <!-- 
+                # ===================== 
+                # multiple file uploads 
+                # ===================== 
+                -->
+                {% for path in a['file_path'].split(',') %}
+                    <a href="{{ url_for('static', filename=path) }}" target="_blank">
+                        [Download {{ path.split('/')[-1] }}]
+                    </a>
+                    <a class="delete_file-btn" href="{{ url_for('remove_file', assignment_id=a['id'], file_path=path, next=request.path) }}">
+                        Remove File
+                    </a>
+                    <br>
+                {% endfor %}
+
+            {% else %}
+                <p><em>No file uploaded.</em></p>
+            {% endif %}
+        </div>
+
+        <!-- 
+        # ======================================= 
+        # EDIT / DELETE / MARK DONE BUTTONS BELOW 
+        # ======================================= 
+        -->
+        <div class="assignment-links">
+            <a class="edit-btn" href="{{ url_for('edit', assignment_id=a['id']) }}">Edit</a>
+            <a class="delete-btn" href="{{ url_for('delete', assignment_id=a['id'], next=request.path) }}">Delete</a>
+
+        
+        </div>
+
+    </div>
+    {% endfor %}
+</section>
+
+
+
+<script>
+function toggleDetails(id) {
+    const box = document.getElementById("details-" + id);
+    box.style.display = (box.style.display === "none") ? "block" : "none";
+}
+</script>
+
+
+
+{% endblock %}
