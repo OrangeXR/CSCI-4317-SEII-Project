@@ -92,7 +92,7 @@ Navigate to the application's root folder and run app.py
 - <img width="835" height="89" alt="image" src="https://github.com/user-attachments/assets/470fa7a0-e67e-45c2-b8d2-04260a7cf058" />
 - Login or create an account
 - <img width="144" height="193" alt="image" src="https://github.com/user-attachments/assets/5b918fe1-f2a8-4761-a25c-37e58c10d780" />
-- Once logged in you will be taken to the dashboard showing assignments due this, next week, and list of your assignments.  The list is sorted by due date by default.
+- Once successfully logged in you will be taken to the dashboard showing assignments due this, next week, and list of your assignments.  The list is sorted by due date by default.
 - <img width="893" height="382" alt="image" src="https://github.com/user-attachments/assets/abbac92a-b1fe-4758-be5b-08e6ebbf7c50" />
 - Assignment Notes can be viewed by clicking on the Show Details button
 - <img width="205" height="338" alt="image" src="https://github.com/user-attachments/assets/05c31adc-e2fe-40fb-a335-23f944486c29" />
