@@ -285,7 +285,7 @@ def add():
             return render_template(
                 "add_assignment.html",
                 user_name=session["username"],
-                error="Invalid date format. Please use YYYY-MM-DD.",
+                error="Invalid date format. Please use MM-DD-YYYY.",
                 name=request.form["name"],
                 class_name=request.form["class_name"],
                 category=request.form["category"],
