@@ -332,12 +332,12 @@ def add():
     return render_template(
         "add_assignment.html",
         user_name=session["username"],
-        error="Invalid date format. Please use YYYY-MM-DD.",
-        name=request.form["name"],
-        class_name=request.form["class_name"],
-        category=request.form["category"],
-        due_date=due_date,
-        notes=request.form.get("notes", "")
+        error=None,
+        name="",
+        class_name="",
+        category="",
+        due_date="",
+        notes=""
     )
         
 
