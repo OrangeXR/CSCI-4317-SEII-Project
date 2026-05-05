@@ -301,16 +301,15 @@ p[style*="color:red"] {
 
 /* ========= Assignment Text ========= */
 .assignment-text1{
-    color: #0f04aaf6;
-    -webkit-text-stroke: 0.1px rgb(15, 199, 31);
-    font-weight: 500;
+    font-size: 1.1em;
+    font-weight: 700;
 }
 .assignment-text2{
-    color: #12e61d;
-    background-color: #0f0f0f;
-    -webkit-text-stroke: 0.2px black;
-    text-decoration: none;
     font-weight: 500;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 4px;
+    /* Color and black background removed so it inherits from the card */
 }
 
 
@@ -393,23 +392,25 @@ p[style*="color:red"] {
     gap: 16px;
 }
 
+/* 1. Set default text color to White for dark cards (default, overdue, done) */
 .assignment-card {
-    background: #1a1a1a;
+    color: #ffffff; 
     padding: 10px;
     border-radius: 10px;
     border-left: 6px solid transparent;
     border: 1px solid #2a2a2a;
+
 }
 
-.assignment-card.overdue,
+/* 2. Force Dark text on all the brightly colored background cards */
 .assignment-card.due-today,
 .assignment-card.due-3,
 .assignment-card.due-5,
 .assignment-card.due-7,
 .assignment-card.due-14,
 .assignment-card.due-30,
-.assignment-card.due-xxxx,
-.assignment-card.done {
+.assignment-card.due-xxxx {
+    color: #111111 !important; 
     border-left-width: 6px !important;
     border-left-style: solid !important;
     background: inherit; 
@@ -622,6 +623,10 @@ p[style*="color:red"] {
     background: #1b1717;
     border-left: 3px solid #312d2d;
     border-radius: 4px;
+    color: #e6e6e6 !important; /* Forces text to be light gray against the dark background */
 }
 
-
+/* Ensure standard links inside the details box stay visible and don't inherit dark colors */
+.details-box a:not(.delete_file-btn) {
+    color: #4cc9f0 !important; 
+}
