@@ -12,14 +12,28 @@
 </div>
 
 <h2>Recently Completed Assignments</h2>
-<ul>
+
+<ul class="completed-list">
     {% for a in done_assignments %}
-        <li class="done">
-            <strong>{{ a['name'] }}</strong> — {{ a['class_name'] }} ({{ a['due_date'] }})
+        <li class="done completed-item">
+            <div class="completed-info">
+                <strong>{{ a['name'] }}</strong>
+                — {{ a['class_name'] }} ({{ a['due_date'] }})
+            </div>
+
+            <div class="completed-actions"><br>
+                <a class="notdone-btn" href="{{ url_for('not_done', assignment_id=a['id']) }}">
+                    Mark as Not Done
+                </a>
+
+                <a class="delete-btn" href="{{ url_for('delete', assignment_id=a['id'], next=request.path) }}">
+                    Delete
+                </a>
+            </div>
         </li>
-        
     {% else %}
         <p>No completed assignments yet.</p>
     {% endfor %}
 </ul>
+
 {% endblock %}
