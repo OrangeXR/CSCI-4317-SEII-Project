@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import check_password_hash, generate_password_hash
-from database import create_user, get_user_by_username, get_user_by_id, get_all_assignments, get_done_assignments, add_assignment, update_assignment, delete_assignment, get_assignment, update_profile_picture, update_assignment_files, remove_file_from_assignment, mark_assignment_done
+from database import create_user, get_user_by_username, get_user_by_id, get_all_assignments, get_done_assignments, add_assignment, update_assignment, delete_assignment, get_assignment, update_profile_picture, update_assignment_files, remove_file_from_assignment, mark_assignment_done, mark_assignment_not_done
 from datetime import datetime, timedelta
 import os
 
@@ -145,26 +145,20 @@ def index():
     # PROCESS ASSIGNMENTS
     # ============================
     for a in assignments:
-        status = a["status"]
-
-        # -------------------------
-        # DONE ASSIGNMENTS
-        # -------------------------
-        if status == 1:
+        if a["status"] == 1:
             done_assignments.append((a, "done"))
             continue
 
-        # Keep only the 4 most recent completed assignments
-        done_assignments.sort(key=lambda x: x[0]["due_date"], reverse=True)
-        done_assignments = done_assignments[:4]
+
         
         # -------------------------
         # ACTIVE ASSIGNMENTS
         # -------------------------
         raw_due = a["due_date"]
 
-        if not raw_due or "-" not in raw_due:
-            raw_due = a["category"]
+        if not raw_due:
+            active_assignments.append((a, ""))
+            continue
 
         if not raw_due or "-" not in raw_due:
             tag = ""
@@ -199,6 +193,9 @@ def index():
             tag = "due-xxxx"
 
         active_assignments.append((a, tag))
+    # Keep only the 4 most recent completed assignments
+    done_assignments.sort(key=lambda x: x[0]["due_date"], reverse=True)
+    done_assignments = done_assignments[:12]
 
     # ============================
     # SORT ACTIVE ASSIGNMENTS
@@ -276,9 +273,9 @@ def add():
         return redirect(url_for("login"))
 
     if request.method == "POST":
-        name = request.form["name"]
-        class_name = request.form["class_name"]
-        category = request.form["category"]
+        name = request.form["name"].strip()
+        class_name = request.form["class_name"].strip()
+        category = request.form["category"].strip()
         due_date = request.form["due_date"]
 
         if not is_valid_date(due_date):
@@ -339,7 +336,6 @@ def add():
         due_date="",
         notes=""
     )
-        
 
 
 
@@ -355,9 +351,9 @@ def edit(assignment_id):
     assignment = get_assignment(assignment_id)
 
     if request.method == "POST":
-        name = request.form["name"]
-        class_name = request.form["class_name"]
-        category = request.form["category"]
+        name = request.form["name"].strip()
+        class_name = request.form["class_name"].strip()
+        category = request.form["category"].strip()
         due_date = request.form["due_date"]
 
         if not is_valid_date(due_date):
@@ -372,7 +368,8 @@ def edit(assignment_id):
                 "edit_assignment.html",
                 assignment=assignment,
                 user_name=session["username"],
-                error="Invalid date format. Please use MM-DD-YYYY."
+                error="Invalid date format. Please use YYYY-MM-DD."
+
             )
 
         notes = request.form.get("notes", "")
@@ -438,6 +435,9 @@ def delete(assignment_id):
 # =========================================================
 @app.route("/remove_file/<int:assignment_id>")
 def remove_file(assignment_id):
+    if ".." in file_path or file_path.startswith("/"):
+        return redirect(next_page)
+
     if "user_id" not in session:
         return redirect(url_for("login"))
 
@@ -474,9 +474,18 @@ def done(assignment_id):
     mark_assignment_done(assignment_id)
     return redirect(url_for("index"))
 
+# =======================================================================
+# unFinish Assignment - Mark assignment as Not Done
+# =======================================================================
 
+@app.route("/not_done/<int:assignment_id>")
+def not_done(assignment_id):
+    if "user_id" not in session:
+        return redirect(url_for("login"))
 
+    mark_assignment_not_done(assignment_id)
 
+    return redirect(url_for("index"))
 
 
 
