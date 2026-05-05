@@ -6,7 +6,13 @@ body {
     margin: 0;
     padding: 40px;
 }
+ul {
+    padding-left: 18px;
+}
 
+li {
+    margin-bottom: 8px;
+}
 a {
     color: #4cc9f0;
     text-decoration: none;
@@ -29,6 +35,78 @@ a:hover {
 }
 
 
+/* ====== DASHBOARD LAYOUT (Unified) ====== */
+.layout {
+    display: flex;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+/* ====== SIDEBAR (Final width: 240px) ====== */
+.sidebar {
+    width: 240px;
+    background: #141414;
+    padding: 25px;
+    border-right: 1px solid #2a2a2a;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+}
+
+.sidebar h2 {
+    margin-bottom: 25px;
+    font-size: 20px;
+}
+
+.sidebar nav a {
+    display: block;
+    padding: 10px 0;
+    color: #d0d0d0;
+    font-size: 15px;
+}
+
+.sidebar nav a:hover {
+    color: #4cc9f0;
+}
+
+/* ====== MAIN CONTENT (Adjusted for sidebar width) ====== */
+.content {
+    margin-left: 260px; /* 240px sidebar + 20px spacing */
+    padding: 30px;
+    width: calc(100% - 260px);
+    padding-bottom: 80px; /* prevents footer overlap */
+}
+
+/* ====== OVERVIEW CARDS ====== */
+.overview {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.overview .card {
+    flex: 1;
+    background: #1a1a1a;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid #2a2a2a;
+}
+
+/* ====== SORTING CONTROLS ====== */
+.sort-controls {
+    margin-bottom: 20px;
+}
+
+.sort-controls select {
+    padding: 8px 12px;
+    background: #222;
+    color: #fff;
+    border-radius: 6px;
+    border: 1px solid #444;
+}
 
 /* ====== headers ====== */
 h1, h2, h3 {
@@ -305,85 +383,21 @@ p[style*="color:red"] {
     font-weight: 700;
 }
 .assignment-text2{
-    font-weight: 500;
+    color: #12e61d;
+    background-color: #0f0f0f;
+    -webkit-text-stroke: 0.2px black;
     text-decoration: none;
+    font-weight: 500;
     display: inline-block;
     margin-top: 4px;
     /* Color and black background removed so it inherits from the card */
 }
 
 
-/* ====== DASHBOARD LAYOUT ====== */
-.layout {
-    display: flex;
-    min-height: 100vh;
-    margin: 0;
-    padding: 0;
-}
 
-/* ====== SIDEBAR ====== */
-.sidebar {
-    width: 240px;
-    background: #141414;
-    padding: 25px;
-    border-right: 1px solid #2a2a2a;
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-}
 
-.sidebar h2 {
-    margin-bottom: 25px;
-    font-size: 20px;
-}
 
-.sidebar nav a {
-    display: block;
-    padding: 10px 0;
-    color: #d0d0d0;
-    font-size: 15px;
-}
 
-.sidebar nav a:hover {
-    color: #4cc9f0;
-}
-
-/* ====== MAIN CONTENT ====== */
-.content {
-    margin-left: 260px; /* space for sidebar */
-    padding: 30px;
-    width: calc(100% - 260px);
-}
-
-/* ====== OVERVIEW CARDS ====== */
-.overview {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 30px;
-}
-
-.overview .card {
-    flex: 1;
-    background: #1a1a1a;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    border: 1px solid #2a2a2a;
-}
-
-/* ====== SORTING CONTROLS ====== */
-.sort-controls {
-    margin-bottom: 20px;
-}
-
-.sort-controls select {
-    padding: 8px 12px;
-    background: #222;
-    color: #fff;
-    border-radius: 6px;
-    border: 1px solid #444;
-}
 
 /* ====== ASSIGNMENT GRID ====== */
 .assignment-grid {
@@ -391,63 +405,57 @@ p[style*="color:red"] {
     grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
     gap: 16px;
 }
-
-/* 1. Set default text color to White for dark cards (default, overdue, done) */
+/* ====== Card Size ====== */
 .assignment-card {
-    color: #ffffff; 
+    background: #ffffff;
     padding: 10px;
     border-radius: 10px;
     border-left: 6px solid transparent;
     border: 1px solid #2a2a2a;
-
-}
-
-/* 2. Force Dark text on all the brightly colored background cards */
-.assignment-card.due-today,
-.assignment-card.due-3,
-.assignment-card.due-5,
-.assignment-card.due-7,
-.assignment-card.due-14,
-.assignment-card.due-30,
-.assignment-card.due-xxxx {
-    color: #111111 !important; 
-    border-left-width: 6px !important;
-    border-left-style: solid !important;
-    background: inherit; 
 }
 
 
 
+/* ====== Card background Colors ====== */
 .assignment-card.overdue {
     background: linear-gradient(90deg, #2a0f0f, #3a0f0f, #2a0f0f) !important;
 }
 
 .assignment-card.due-today {
     background: #ff0000 !important;
+    color: #000000 !important;
 }
 
 .assignment-card.due-3 {
     background: #ff5e00 !important;
+    color: #000000 !important;
 }
 
 .assignment-card.due-5 {
     background: #ffaa00 !important;
+    color: #000000 !important;
 }
 
 .assignment-card.due-7 {
     background: #ffee00 !important;
+    color: #000000 !important; /* Forces text to be light gray against the dark background */
 }
 
 .assignment-card.due-14 {
     background: #00ff00 !important;
+    color: #000000 !important;
 }
 
 .assignment-card.due-30 {
     background: #00ffaa !important;
+    color: #000000 !important;
 }
 
 .assignment-card.due-xxxx {
-    background: #00f7ff !important;
+    color: #fcfbfb !important; 
+    border-left-width: 6px !important;
+    border-left-style: solid !important;
+    background: inherit; 
 }
 
 .assignment-card.done {
@@ -457,50 +465,6 @@ p[style*="color:red"] {
 
 
 
-
-
-/* ====== DASHBOARD LAYOUT ====== */
-.layout {
-    display: flex;
-    min-height: 100vh;
-    margin: 0;
-    padding: 0;
-}
-
-/* ====== SIDEBAR ====== */
-.sidebar {
-    width: 120px;
-    background: #141414;
-    padding: 25px;
-    border-right: 1px solid #2a2a2a;
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-}
-
-.sidebar h2 {
-    margin-bottom: 25px;
-    font-size: 20px;
-}
-
-.sidebar nav a {
-    display: block;
-    padding: 10px 0;
-    color: #d0d0d0;
-    font-size: 15px;
-}
-
-.sidebar nav a:hover {
-    color: #4cc9f0;
-}
-
-/* ====== MAIN CONTENT ====== */
-.content {
-    margin-left: 110px;
-    padding: 30px;
-    width: calc(100% - 110px);
-}
 
 /* ====== OVERVIEW CARDS ====== */
 .overview {
@@ -623,10 +587,71 @@ p[style*="color:red"] {
     background: #1b1717;
     border-left: 3px solid #312d2d;
     border-radius: 4px;
-    color: #e6e6e6 !important; /* Forces text to be light gray against the dark background */
 }
 
-/* Ensure standard links inside the details box stay visible and don't inherit dark colors */
+
+.assignment-files ul {
+    padding-left: 15px;
+}
+
+.assignment-files li {
+    margin-bottom: 4px;
+}
+
+.assignment-files a {
+    color: #4cc9f0;
+}
+
+.assignment-files a:hover {
+    color: #72ddf7;
+}
+
+
+.details-box {
+    margin-top: 10px;
+    padding: 10px;
+    background: #1b1717;
+    border-left: 3px solid #312d2d;
+    border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid #2a2a2a;
+    }
+
+    .content {
+        margin-left: 0;
+        width: 100%;
+        padding: 20px;
+    }
+
+    .assignment-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+
+.sidebar nav a.active {
+    color: #4cc9f0;
+    font-weight: 700;
+}
+
+
+
+.assignment-card:hover {
+    transform: translateY(-3px);
+    transition: 0.15s ease;
+    box-shadow: 0 0 12px rgba(76, 201, 240, 0.3);
+}
+
+
 .details-box a:not(.delete_file-btn) {
     color: #4cc9f0 !important; 
 }
