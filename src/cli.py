@@ -134,7 +134,7 @@ def get_assignments_not_done(user_id):
         """
         SELECT id, name, class_name, category, due_date, status
         FROM assignments
-        WHERE user_id = ? AND status = '0'
+        WHERE user_id = ? AND status = 0
         ORDER BY due_date ASC
         """,
         (user_id,)
@@ -154,7 +154,7 @@ def get_assignments_not_done(user_id):
 
     for item in items:
         class_name = item["class_name"]
-        status_text = "Done" if item["status"] == "1" else "Not Done"
+        status_text = "Done" if item["status"] == 1 else "Not Done"
 
         print(
             f"{str(item['id']).ljust(5)} "
