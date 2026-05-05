@@ -71,6 +71,57 @@
 
 </div>
 
+
+
+
+<div class="completed-section">
+    <h2>Recently Completed</h2>
+
+    <div class="completed-grid">
+        {% for a, tag in done_assignments %}
+        <div class="completed-card">
+
+            <strong>{{ a['name'] }}</strong><br>
+            <span class="assignment-text2">{{ a['class_name'] }}</span><br>
+            <span class="assignment-text1">{{ a['category'] }}</span><br>
+            <small>Due Date: {{ a['due_date'] }}</small><br>
+
+            {% if a['file_path'] %}
+            <div class="assignment-files">
+                <strong>Files:</strong>
+                <ul>
+                    {% for file in a['file_path'].split(',') %}
+                        {% if file %}
+                        <li>
+                            <a href="{{ url_for('static', filename=file) }}" target="_blank">
+                                {{ file.split('/')[-1] }}
+                            </a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if a['notes'] %}
+                <button class="details-btn">Show Notes</button>
+                <div class="details-box" style="display:none;">
+                    {{ a['notes'] }}
+                </div>
+            {% endif %}
+
+            <a class="notdone-btn" href="{{ url_for('not_done', assignment_id=a['id']) }}">
+                Mark as Not Done
+            </a>
+
+            <a class="delete-btn" href="{{ url_for('delete', assignment_id=a['id'], next=request.path) }}">
+                Delete
+            </a>
+
+        </div>
+        {% endfor %}
+    </div>
+</div>
 <script>
 document.querySelectorAll('.details-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -79,5 +130,6 @@ document.querySelectorAll('.details-btn').forEach(btn => {
     });
 });
 </script>
+
 
 {% endblock %}
