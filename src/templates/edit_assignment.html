@@ -19,14 +19,31 @@
     <label>Due Date:</label><br>
     <input type="date" name="due_date" value="{{ assignment['due_date'] }}"><br><br>
 
-    <label>Notes:</label>
-    <textarea name="notes" rows="4" class="form-control">{{ assignment.notes if assignment else "" }}</textarea>
+     <label>Notes:</label>
+    <textarea name="notes" rows="4" class="form-control">{{ assignment['notes'] or '' }}</textarea>
 
     <label>Upload File:</label>
     <input type="file" name="file_uploads" class="form-control" multiple>
 
+    {% if assignment['file_path'] %}
+        <h3>Attached Files</h3>
+        <ul>
+            {% for file in assignment['file_path'].split(',') %}
+                {% if file %}
+                    <li>
+                        <a href="{{ url_for('static', filename=file) }}" target="_blank">
+                            {{ file.split('/')[-1] }}
+                        </a>
 
-
+                        <a class="delete_file-btn"
+                           href="{{ url_for('remove_file', assignment_id=assignment['id'], file_path=file, next=request.path) }}">
+                            ✖
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    {% endif %}
     <button type="submit">Save Changes</button>
 </form>
 

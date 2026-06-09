@@ -1,6 +1,7 @@
 {% extends "0-base.html" %}
 {% block content %}
 <h1>Add Assignment</h1>
+
 {% if error %}
 <div class="error">{{ error }}</div>
 {% endif %}
@@ -20,11 +21,10 @@
     <input type="date" name="due_date" value="{{ due_date or '' }}"><br><br>
 
     <label>Notes:</label>
-    <textarea name="notes" rows="4" class="form-control">{{ notes if assignment else "" }}</textarea>
+    <textarea name="notes" rows="4" class="form-control">{{ notes or "" }}</textarea>
 
     <label>Upload File:</label>
-    <input type="file" name="file_uploads" class="form-control" multiple>
-
+    <input type="file" name="file_uploads" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg, .mp4" multiple>
 
     <button type="submit">Add Assignment</button>
 </form>

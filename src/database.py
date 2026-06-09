@@ -206,6 +206,31 @@ def mark_assignment_done(assignment_id):
 
 
 # ==================================
+# Mark Assignment Not Done
+# ==================================
+
+def mark_assignment_not_done(assignment_id):
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("""
+        UPDATE assignments
+        SET status = 0
+        WHERE id = ?
+    """, (assignment_id,))
+    db.commit()
+    db.close()
+
+
+
+
+
+
+
+
+
+
+
+# ==================================
 # Delete Assignment
 # ==================================
 

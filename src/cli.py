@@ -3,7 +3,23 @@ from werkzeug.security import check_password_hash
 from dotenv import load_dotenv
 from datetime import datetime
 from getpass import getpass
+from colorama import Fore, Back, Style, init
+init(autoreset=True)
 
+# ================================
+# Setting Color Variables
+# ================================
+
+ORANGE = "\033[38;5;208m"   # bright orange
+RED = "\033[38;5;196m"        # Overdue
+YELLOW = "\033[38;5;226m"     # Due today
+PINK = "\033[38;5;205m"       # Due in 3 days
+PURPLE = "\033[38;5;141m"     # Due in 5 days
+BLUE = "\033[38;5;75m"        # Due in 7 days
+GREEN = "\033[38;5;82m"       # Done
+BLINK = "\033[5m"
+BOLD = "\033[1m"
+RESET = Style.RESET_ALL
 
 # ==================
 # open db connection
@@ -59,14 +75,14 @@ def choose_user():
             password = getpass("Enter password: ").strip()
 
             if check_password_hash(stored_hash, password):
-                print("Login successful!\n")
+                print(Fore.GREEN + "Login successful!\n")
                 return user_id
             else:
                 attempts += 1
                 remaining = MAX_ATTEMPTS - attempts
-                print(f"Incorrect password. {remaining} attempt(s) remaining.\n")
+                print(Fore.RED + f"Incorrect password. {remaining} attempt(s) remaining.\n")
 
-        print("Too many failed attempts. Returning to user selection...\n")
+        print(Fore.YELLOW + "Too many failed attempts. Returning to user selection...\n")
         return None
 
 
@@ -103,26 +119,20 @@ def get_assignments(user_id):
 
     items = sorted(items, key=lambda item: item["name"].lower())
 
-    print("\n==================================================== Assignments ====================================================")
+    print(ORANGE + "\n==================================================== Assignments ====================================================" + RESET)
     print(f"{'ID'.ljust(5)} {'Name'.ljust(30)} {'Class'.ljust(30)} {'Category'.ljust(15)} {'Due Date'.ljust(15)} {'Status'.ljust(10)}")
-    print("-" * 117)
+    print(ORANGE + "-" * 117 + RESET)
 
     for item in items:
-        class_name = item["class_name"]  
-        if item["status"] == 0:
-            status_text = "Not Done"
-        elif item["status"] == 1:
-            status_text = "Done"
-        else:
-            status_text = "Unknown"
+        urgency = get_urgency_color(item["due_date"], item["status"])
 
         print(
             f"{str(item['id']).ljust(5)} "
             f"{item['name'].ljust(30)} "
-            f"{class_name.ljust(30)} "
+            f"{item['class_name'].ljust(30)} "
             f"{item['category'].ljust(15)} "
-            f"{item['due_date'].ljust(15)}"
-            f"{status_text}"
+            f"{item['due_date'].ljust(15)} "
+            f"{urgency}"
         )
 
 # =========================
@@ -134,14 +144,14 @@ def get_assignments_not_done(user_id):
         """
         SELECT id, name, class_name, category, due_date, status
         FROM assignments
-        WHERE user_id = ? AND status = '0'
+        WHERE user_id = ? AND status = 0
         ORDER BY due_date ASC
         """,
         (user_id,)
     ).fetchall()
     db.close()
 
-    print("\n================================================ Assignments Not Done ===============================================")
+    print(ORANGE + "================================================ Assignments Not Done ===============================================" + RESET)
 
 
     if not items:
@@ -150,19 +160,18 @@ def get_assignments_not_done(user_id):
 
 
     print(f"{'ID'.ljust(5)} {'Name'.ljust(30)} {'Class'.ljust(25)} {'Category'.ljust(15)} {'Due Date'.ljust(15)} {'Status'}")
-    print("-" * 117)
+    print(ORANGE + "-" * 117 + RESET)
 
     for item in items:
-        class_name = item["class_name"]
-        status_text = "Done" if item["status"] == "1" else "Not Done"
+        urgency = get_urgency_color(item["due_date"], item["status"])
 
         print(
             f"{str(item['id']).ljust(5)} "
             f"{item['name'].ljust(30)} "
-            f"{class_name.ljust(30)} "
+            f"{item['class_name'].ljust(30)} "
             f"{item['category'].ljust(15)} "
             f"{item['due_date'].ljust(15)} "
-            f"{status_text}"
+            f"{urgency}"
         )
 
 
@@ -189,15 +198,15 @@ def view_assignment_notes(user_id):
 
     # If no assignments have notes
     if not items:
-        print("\n================================")
+        print(ORANGE + "\n================================" + RESET)
         print("\nNo assignments with notes found.")
-        print("\n================================")
+        print(ORANGE + "\n================================" + RESET)
         db.close()
         return
 
-    print("\n====================== Assignments With Notes ======================")
+    print(ORANGE + "\n====================== Assignments With Notes ======================" + RESET)
     print(f"{'ID'.ljust(5)} {'Name'.ljust(40)} {'Due Date'.ljust(15)}")
-    print("-" * 60)
+    print(ORANGE + "-" * 60 + RESET)
 
     for item in items:
         print(f"{str(item['id']).ljust(5)} {item['name'].ljust(40)} {item['due_date'].ljust(15)}")
@@ -228,7 +237,9 @@ def view_assignment_notes(user_id):
         print("Invalid assignment ID or no notes for this assignment.")
         return
 
-    print("\n===================== Notes ======================")
+
+    
+    print(ORANGE + "\n===================== Notes ======================" + RESET)
     print(f"Assignment: {row['name']}")
     print(f"Class:      {row['class_name']}")
     print(f"Category:   {row['category']}")
@@ -254,7 +265,7 @@ def validate_due_date(date_str):
 
 
 def add_assignment(user_id):
-    print("\n=== Add New Assignment ===")
+    print(ORANGE + "\n=== Add New Assignment ===" + RESET)
 
     name = input("Assignment name: ").strip()
     class_name = input("Class name (ex: Software Engineering): ").strip()
@@ -285,7 +296,7 @@ def add_assignment(user_id):
     db.commit()
     db.close()
 
-    print("\nAssignment added successfully!")
+    print(Fore.GREEN + "\nAssignment added successfully!")
 
 
 
@@ -308,7 +319,7 @@ def mark_assignment_done(user_id):
         db.close()
         return
 
-    print("\n=========== Mark Assignment as Done ===========")
+    print(ORANGE + "\n=========== Mark Assignment as Done ===========" + RESET)
     print(f"{'ID'.ljust(5)} {'Name'.ljust(40)} {'Status'}")
     print("-" * 60)
 
@@ -331,7 +342,299 @@ def mark_assignment_done(user_id):
     db.commit()
     db.close()
 
-    print("\nAssignment marked as Done!")
+    print(Fore.GREEN + "\nAssignment marked as Done!")
+
+
+
+# =============================================================
+# Added Features
+# =============================================================
+
+def delete_assignment(user_id):
+    db = get_db()
+
+    items = db.execute(
+        "SELECT id, name FROM assignments WHERE user_id = ?",
+        (user_id,)
+    ).fetchall()
+
+    if not items:
+        print(ORANGE + "\nNo assignments found." + RESET)
+        db.close()
+        return
+
+    print(ORANGE + "\n=========== Delete Assignment ===========" + RESET)
+    print(f"{'ID'.ljust(5)} {'Name'}")
+    print("-" * 40)
+
+    for item in items:
+        print(f"{str(item['id']).ljust(5)} {item['name']}")
+
+    try:
+        assignment_id = int(input("\nEnter the ID to delete: "))
+    except ValueError:
+        print("Invalid input.")
+        db.close()
+        return
+
+    db.execute(
+        "DELETE FROM assignments WHERE id = ? AND user_id = ?",
+        (assignment_id, user_id)
+    )
+    db.commit()
+    db.close()
+
+    print(Fore.GREEN + "\nAssignment deleted successfully!" + RESET)
+
+
+def mark_assignment_not_done(user_id):
+    db = get_db()
+
+    items = db.execute(
+        "SELECT id, name, status FROM assignments WHERE user_id = ? AND status = 1",
+        (user_id,)
+    ).fetchall()
+
+    if not items:
+        print(ORANGE + "\nNo completed assignments found." + RESET)
+        db.close()
+        return
+
+    print(ORANGE + "\n=========== Mark Assignment as NOT Done ===========" + RESET)
+    print(f"{'ID'.ljust(5)} {'Name'}")
+    print("-" * 40)
+
+    for item in items:
+        print(f"{str(item['id']).ljust(5)} {item['name']}")
+
+    try:
+        assignment_id = int(input("\nEnter the ID to mark as NOT done: "))
+    except ValueError:
+        print("Invalid input.")
+        db.close()
+        return
+
+    db.execute(
+        "UPDATE assignments SET status = 0 WHERE id = ? AND user_id = ?",
+        (assignment_id, user_id)
+    )
+    db.commit()
+    db.close()
+
+    print(Fore.GREEN + "\nAssignment marked as NOT done!" + RESET)
+
+
+
+def edit_assignment(user_id):
+    db = get_db()
+
+    items = db.execute(
+        "SELECT id, name FROM assignments WHERE user_id = ?",
+        (user_id,)
+    ).fetchall()
+
+    if not items:
+        print(ORANGE + "\nNo assignments found." + RESET)
+        db.close()
+        return
+
+    print(ORANGE + "\n=========== Edit Assignment ===========" + RESET)
+    print(f"{'ID'.ljust(5)} {'Name'}")
+    print("-" * 40)
+
+    for item in items:
+        print(f"{str(item['id']).ljust(5)} {item['name']}")
+
+    try:
+        assignment_id = int(input("\nEnter the ID to edit: "))
+    except ValueError:
+        print("Invalid input.")
+        db.close()
+        return
+
+    row = db.execute(
+        "SELECT * FROM assignments WHERE id = ? AND user_id = ?",
+        (assignment_id, user_id)
+    ).fetchone()
+
+    if not row:
+        print("Invalid assignment ID.")
+        db.close()
+        return
+
+    print(ORANGE + "\nWhat would you like to edit?" + RESET)
+    print("1. Name")
+    print("2. Class")
+    print("3. Category")
+    print("4. Due Date")
+    print("5. Notes")
+    print("0. Cancel")
+
+    choice = input("\nChoose: ").strip()
+
+    field_map = {
+        "1": ("name", "New name"),
+        "2": ("class_name", "New class name"),
+        "3": ("category", "New category"),
+        "4": ("due_date", "New due date (YYYY-MM-DD)"),
+        "5": ("notes", "New notes")
+    }
+
+    if choice not in field_map:
+        print("Cancelled.")
+        db.close()
+        return
+
+    column, prompt = field_map[choice]
+    new_value = input(f"{prompt}: ").strip()
+
+    db.execute(
+        f"UPDATE assignments SET {column} = ? WHERE id = ? AND user_id = ?",
+        (new_value, assignment_id, user_id)
+    )
+    db.commit()
+    db.close()
+
+    print(Fore.GREEN + "\nAssignment updated successfully!" + RESET)
+
+
+
+
+def search_assignments(user_id):
+    keyword = input("\nEnter search keyword: ").strip().lower()
+
+    db = get_db()
+    items = db.execute(
+        """
+        SELECT *
+        FROM assignments
+        WHERE user_id = ?
+          AND (
+                LOWER(name) LIKE ?
+             OR LOWER(class_name) LIKE ?
+             OR LOWER(category) LIKE ?
+             OR LOWER(notes) LIKE ?
+          )
+        """,
+        (user_id, f"%{keyword}%", f"%{keyword}%", f"%{keyword}%", f"%{keyword}%")
+    ).fetchall()
+    db.close()
+
+    print(ORANGE + "\n=========== Search Results ===========" + RESET)
+
+    if not items:
+        print("No matching assignments found.")
+        return
+
+    for item in items:
+        print(f"- {item['name']} ({item['class_name']}) — due {item['due_date']}")
+
+
+
+def filter_assignments(user_id):
+    print(ORANGE + "\nFilter by:" + RESET)
+    print("1. Category")
+    print("2. Class")
+    print("3. Status (Done / Not Done)")
+    print("0. Cancel")
+
+    choice = input("\nChoose: ").strip()
+
+    db = get_db()
+
+    if choice == "1":
+        category = input("Enter category: ").strip()
+        query = """
+            SELECT * FROM assignments
+            WHERE user_id = ? AND category = ?
+        """
+        params = (user_id, category)
+
+    elif choice == "2":
+        class_name = input("Enter class name: ").strip()
+        query = """
+            SELECT * FROM assignments
+            WHERE user_id = ? AND class_name = ?
+        """
+        params = (user_id, class_name)
+
+    elif choice == "3":
+        print("1. Done")
+        print("2. Not Done")
+        s = input("Choose: ").strip()
+        status = 1 if s == "1" else 0
+        query = """
+            SELECT * FROM assignments
+            WHERE user_id = ? AND status = ?
+        """
+        params = (user_id, status)
+
+    else:
+        print("Cancelled.")
+        db.close()
+        return
+
+    items = db.execute(query, params).fetchall()
+    db.close()
+
+    print(ORANGE + "\n=========== Filter Results ===========" + RESET)
+
+    if not items:
+        print("No assignments found.")
+        return
+
+    for item in items:
+        print(f"- {item['name']} ({item['class_name']}) — due {item['due_date']}")
+
+
+
+def get_urgency_color(due_date, status):
+    if status == 1:
+        return GREEN + "Done" + RESET
+
+    try:
+        due = datetime.strptime(due_date, "%Y-%m-%d").date()
+    except:
+        return ORANGE + "No Date" + RESET
+
+    today = datetime.today().date()
+    days_left = (due - today).days
+
+    if days_left < 0:
+        return BLINK + BOLD + RED + "OVERDUE" + RESET
+    elif days_left == 0:
+        return YELLOW + "Due Today" + RESET
+    elif days_left <= 3:
+        return PINK + f"Due in {days_left}d" + RESET
+    elif days_left <= 5:
+        return PURPLE + f"Due in {days_left}d" + RESET
+    elif days_left <= 7:
+        return BLUE + f"Due in {days_left}d" + RESET
+    else:
+        return ORANGE + f"{days_left}d left" + RESET
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -359,7 +662,7 @@ def main():
     # ===========
     # Select User
     # ===========
-    print("\n=== Assignment Tracker ===")
+    print(ORANGE + "\n=== Assignment Tracker ===" + RESET)
     user_id = choose_user()
 
     if user_id is None:
@@ -369,14 +672,20 @@ def main():
     # Main Menu
     # =========
     while True:
-        print("\nOptions:")
-        print("1. View Assignments")
-        print("2. View Assignments Not Done")
-        print("3. Add Assignments") # (a bit annoying in terminal)
-        print("4. View Assignment Notes")
-        print("5. Mark Assignment as Done")
-        print("6. Logout")
-        print("0. Exit")
+        print(Fore.CYAN + "\nOptions:")
+        print(Fore.CYAN + "1." + Style.RESET_ALL + " View Assignments")
+        print(Fore.CYAN + "2." + Style.RESET_ALL + " View Assignments Not Done")
+        print(Fore.CYAN + "3." + Style.RESET_ALL + " Add Assignments")
+        print(Fore.CYAN + "4." + Style.RESET_ALL + " Edit Assignment")
+        print(Fore.CYAN + "5." + Style.RESET_ALL + " View Assignment Notes")
+        print(Fore.CYAN + "6." + Style.RESET_ALL + " Mark Assignment as Done")
+        print(Fore.CYAN + "7." + Style.RESET_ALL + " Mark Assignment as NOT Done")
+        print(Fore.CYAN + "8." + Style.RESET_ALL + " Delete Assignment")
+        print(Fore.CYAN + "9." + Style.RESET_ALL + " Filter Assignments")
+        print(Fore.CYAN + "10." + Style.RESET_ALL + " Search Assignments")
+        print(Fore.CYAN + "11." + Style.RESET_ALL + " Logout")
+        print(Fore.CYAN + "0." + Style.RESET_ALL + " Exit")
+
         choice = input("\nChoose an option: ")
 # =====================================================================================  1. Get User Assignments
         if choice == "1":
@@ -387,14 +696,29 @@ def main():
 # =====================================================================================  3. Add an item to user Assignments (not sure if we'll use it in terminal)           
         elif choice == "3":
             add_assignment(user_id)
-# =====================================================================================  4. View Assignment Notes 
+# =====================================================================================  4. Edit an Assignment  
         elif choice == "4":
-            view_assignment_notes(user_id)
-# =====================================================================================  5. Mark an assignment as Done
+            edit_assignment(user_id)
+# =====================================================================================  5. View Assignment Notes 
         elif choice == "5":
-            mark_assignment_done(user_id)
-# =====================================================================================  6. Logout
+            view_assignment_notes(user_id)
+# =====================================================================================  6. Mark an assignment as Done
         elif choice == "6":
+            mark_assignment_done(user_id)
+# =====================================================================================  7. Mark Assignment as Not Done
+        elif choice == "7":
+            mark_assignment_not_done(user_id)
+# =====================================================================================  8. Delete Assignment
+        elif choice == "8":
+            delete_assignment(user_id)
+# =====================================================================================  9. Filter Assignments
+        elif choice == "9":
+            filter_assignments(user_id)
+# =====================================================================================  10. Search Assignments
+        elif choice == "10":
+            search_assignments(user_id)
+# =====================================================================================  11. Logout
+        elif choice == "11":
                 print("\nLogging out...\n")
                 return  "logout"# <-- sends user back to user select
 # =====================================================================================  0. Exit
